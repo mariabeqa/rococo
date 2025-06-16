@@ -2,10 +2,10 @@ syntax = "proto3";
 
 import "rococo-countries.proto";
 
-package guru.qa.grpc.rococo;
+package org.rococo.grpc;
 
 option java_multiple_files = true;
-option java_package = "guru.qa.rococo.grpc";
+option java_package = "org.rococo.grpc";
 option java_outer_classname = "RococoMuseumsProto";
 
 service RococoMuseumsService {
