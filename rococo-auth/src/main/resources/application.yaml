@@ -8,25 +8,18 @@ server:
 spring:
   application:
     name: rococo-auth
-  mvc:
-    log-request-details: true
   datasource:
+    username: root
+    password: secret
     hikari:
       connection-timeout: 20000
       minimum-idle: 10
       maximum-pool-size: 30
       idle-timeout: 10000
       max-lifetime: 1000
-      auto-commit: true
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    baseline-version: 0
-    schemas: public
-    locations: classpath:db/migration/rococo-auth
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         jdbc:
@@ -38,34 +31,24 @@ spring:
     open-in-view: false
 
 logging:
-  file:
-    path: ./logs/rococo-auth
   level:
     root: INFO
     org.springframework.kafka: INFO
     org.springframework.web: INFO
     org.springframework.security: INFO
     org.springframework.security.oauth2: INFO
-    org.springframework.web.cors: INFO
-    org.apache.catalina.filters.RequestDumperFilter: INFO
-    org.springframework.boot.autoconfigure: INFO
 
 ---
 spring:
   config:
     activate:
       on-profile: 'local'
-  autoconfigure:
-    exclude:
-      - 'org.springframework.cloud.vault.config.VaultAutoConfiguration'
-      - 'org.springframework.cloud.vault.config.VaultObservationAutoConfiguration'
-      - 'org.springframework.cloud.vault.config.VaultReactiveAutoConfiguration'
   kafka:
     bootstrap-servers: 'localhost:9092'
+
   datasource:
     url: 'jdbc:mysql://127.0.0.1:3306/rococo-auth?serverTimezone=UTC&createDatabaseIfNotExist=true'
-    username: root
-    password: secret
+
 rococo-front:
   base-uri: 'http://127.0.0.1:3000'
 rococo-auth:
@@ -77,17 +60,10 @@ spring:
   config:
     activate:
       on-profile: 'docker'
-  autoconfigure:
-    exclude:
-      - 'org.springframework.cloud.vault.config.VaultAutoConfiguration'
-      - 'org.springframework.cloud.vault.config.VaultObservationAutoConfiguration'
-      - 'org.springframework.cloud.vault.config.VaultReactiveAutoConfiguration'
   kafka:
     bootstrap-servers: 'kafka:9092'
   datasource:
     url: 'jdbc:mysql://rococo-db:3306/rococo-auth?serverTimezone=UTC&createDatabaseIfNotExist=true'
-    username: postgres
-    password: secret
 rococo-front:
   base-uri: 'http://client.rococo.dc'
 rococo-auth:

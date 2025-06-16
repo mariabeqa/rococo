@@ -1,0 +1,90 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: rococo-gateway
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+    net.devh.boot.grpc: INFO
+    org.springframework.boot.autoconfigure: INFO
+---
+spring:
+  config:
+    activate:
+      on-profile: 'local'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: 'http://127.0.0.1:9000'
+grpc:
+  client:
+    grpcUserdataClient:
+      address: 'static://localhost:8802'
+      negotiationType: PLAINTEXT
+
+    grpcCountriesClient:
+      address: 'static://localhost:8806'
+      negotiationType: PLAINTEXT
+
+    grpcMuseumClient:
+      address: 'static://localhost:8806'
+      negotiationType: PLAINTEXT
+
+    grpcArtistClient:
+      address: 'static://localhost:8808'
+      negotiationType: PLAINTEXT
+
+    grpcPaintingClient:
+      address: 'static://localhost:8810'
+      negotiationType: PLAINTEXT
+      .max-inbound-message-size:
+        9155241000
+
+rococo-ui:
+  uri: http://127.0.0.1:3000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: 'docker'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: 'http://auth.niffler.dc:9000'
+
+grpc:
+  client:
+    grpcUserdataClient:
+      address: 'static://userdata.rococo.dc:8802'
+      negotiationType: PLAINTEXT
+
+    grpcCountriesClient:
+      address: 'static://countries.rococo.dc:8806'
+      negotiationType: PLAINTEXT
+
+    grpcMuseumClient:
+      address: 'static://museum.rococo.dc:8806'
+      negotiationType: PLAINTEXT
+
+    grpcArtistClient:
+      address: 'static://artist.rococo.dc:8808'
+      negotiationType: PLAINTEXT
+
+    grpcPaintingClient:
+      address: 'static://painting.rococo.dc:8810'
+      negotiationType: PLAINTEXT
+      .max-inbound-message-size:
+        9155241000
+
+rococo-ui:
+  uri: http://client.rococo.dc
+---
