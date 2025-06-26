@@ -1,0 +1,2 @@
+org.rococo.jupiter.extension.CookiesExtension
+org.rococo.jupiter.extension.TestMethodContextExtension

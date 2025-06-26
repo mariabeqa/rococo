@@ -3,7 +3,7 @@ import {apiClient} from "$lib/helpers/apiClient";
 
 export const load: PageLoad = async ({}) => {
 
-    const data = await apiClient.loadMuseums({page: 0, size: 4});
+    const data = await apiClient.loadMuseums({page: 0, size: 6});
 
     return {
        ...data

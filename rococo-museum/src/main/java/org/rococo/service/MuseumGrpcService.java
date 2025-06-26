@@ -1,5 +1,6 @@
 package org.rococo.service;
 
+import com.google.protobuf.Empty;
 import org.rococo.data.CountryEntity;
 import org.rococo.data.MuseumEntity;
 import org.rococo.data.repository.CountryRepository;
@@ -132,6 +133,13 @@ public class MuseumGrpcService extends RococoMuseumsServiceGrpc.RococoMuseumsSer
                             String.format("Museum with the title '%s' already exists", request.getMuseum().getTitle())
                     ).asException());
         }
+    }
+
+    @Override
+    public void deleteMuseum(MuseumRequest request, StreamObserver<Empty> responseObserver) {
+        museumRepository.deleteById(UUID.fromString(request.getMuseum().getId()));
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     private @Nonnull CountryEntity getRequiredCountry(@Nonnull UUID id) {

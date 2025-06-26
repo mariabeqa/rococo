@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package org.rococo.grpc;
 
+import "google/protobuf/empty.proto";
 import "rococo-museums.proto";
 import "rococo-artists.proto";
 
@@ -16,6 +17,7 @@ service RococoPaintingsService {
   rpc FindPaintingByAuthorId (PaintingByAuthorIdPageRequest) returns (PaintingsPageResponse) {}
   rpc UpdatePainting(PaintingRequest) returns (PaintingResponse) {}
   rpc AddPainting(AddPaintingRequest) returns (PaintingResponse) {}
+  rpc DeletePainting (DeletePaintingRequest) returns (google.protobuf.Empty) {}
 }
 
 message PaintingRequest {
@@ -66,6 +68,15 @@ message AddPaintingRequest {
   string content = 3;
   ArtistId artistId = 4;
   MuseumId museumId = 5;
+}
+
+message DeletePaintingRequest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  string content = 4;
+  ArtistId artistId = 5;
+  MuseumId museumId = 6;
 }
 
 message ArtistId {

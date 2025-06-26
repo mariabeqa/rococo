@@ -58,8 +58,12 @@ public class UserGrpcService extends RococoUserdataServiceGrpc.RococoUserdataSer
 
     @Override
     public void getCurrent(UsernameRequest request, StreamObserver<UserResponse> responseObserver) {
-        UserEntity byUsername = userRepository.findByUsername(request.getUsername()).orElseThrow(
-                () -> new NotFoundException(String.format("User with username '%s' not found", request.getUsername()))
+        UserEntity byUsername = userRepository.findByUsername(request.getUsername()).orElseGet(
+                () -> {
+                    UserEntity newUser = new UserEntity();
+                    newUser.setUsername(request.getUsername());
+                    return newUser;
+                }
         );
 
         responseObserver.onNext(

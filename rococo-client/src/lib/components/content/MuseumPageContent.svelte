@@ -43,7 +43,7 @@
                         dataKey="title"
                 />
             </div>
-            <div>{$singleMuseumStore.data?.description}</div>
+            <div id="description">{$singleMuseumStore.data?.description}</div>
         </div>
         <img src={$singleMuseumStore.data?.photo} alt={$singleMuseumStore.data?.title} class="my-4 mx-auto w-full"/>
     </div>

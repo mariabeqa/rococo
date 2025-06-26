@@ -54,7 +54,7 @@ public class UserEntity {
 
     public static @Nonnull User toGrpc(@Nonnull UserEntity entity) {
         return User.newBuilder()
-                .setId(entity.getId().toString())
+                .setId(entity.getId() != null ? entity.getId().toString() : "")
                 .setUsername(entity.getUsername())
                 .setFirstname(entity.getFirstname() != null ? entity.getFirstname() : "")
                 .setLastname(entity.getLastname() != null ? entity.getLastname() : "")

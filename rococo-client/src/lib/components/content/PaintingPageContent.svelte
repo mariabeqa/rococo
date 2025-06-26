@@ -30,7 +30,8 @@
         <div>
             <div>
                 <header class="card-header text-center font-bold">{$singlePaintingStore?.data?.title}</header>
-                <div class="text-center">{$singlePaintingStore?.data?.artist?.name}</div>
+                <div class="text-center" id="author">{$singlePaintingStore?.data?.artist?.name}</div>
+                <div class="text-center" id="museum">{$singlePaintingStore?.data?.museum?.title}</div>
                 <div class="w-56 m-3 mx-auto">
                     <EditComponent
                             dataTestId="edit-painting"
@@ -46,7 +47,7 @@
                     />
                 </div>
             </div>
-            <div class="m-4">{$singlePaintingStore?.data?.description}</div>
+            <div class="m-4" id="description">{$singlePaintingStore?.data?.description}</div>
         </div>
     </div>
 </article>

@@ -50,7 +50,7 @@
     <span>{label}</span>
     <select 
         class="select" 
-        size={3}
+        size={5}
         bind:value={value}
         on:select={() => error = ""}
         {required}

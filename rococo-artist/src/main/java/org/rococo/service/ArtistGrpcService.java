@@ -1,5 +1,6 @@
 package org.rococo.service;
 
+import com.google.protobuf.Empty;
 import org.rococo.grpc.*;
 import org.rococo.data.ArtistEntity;
 import org.rococo.data.repository.ArtistRepository;
@@ -102,8 +103,14 @@ public class ArtistGrpcService extends RococoArtistsServiceGrpc.RococoArtistsSer
                 ArtistResponse.newBuilder()
                         .setArtist(ArtistEntity.toGrpc(saved))
                         .build()
-
         );
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void deleteArtist(ArtistRequest request, StreamObserver<Empty> responseObserver) {
+        artistRepository.deleteById(UUID.fromString(request.getArtist().getId()));
+        responseObserver.onNext(Empty.getDefaultInstance());
         responseObserver.onCompleted();
     }
 }

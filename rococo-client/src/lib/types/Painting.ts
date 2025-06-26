@@ -10,6 +10,7 @@ export interface PaintingType extends IdDto{
     description: string,
     museum?: {
         id?: string,
+        title?: string
     },
 }
 

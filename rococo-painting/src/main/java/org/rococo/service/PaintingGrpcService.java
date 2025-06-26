@@ -1,5 +1,6 @@
 package org.rococo.service;
 
+import com.google.protobuf.Empty;
 import org.rococo.data.PaintingEntity;
 import org.rococo.data.repository.PaintingRepository;
 import org.rococo.ex.NotFoundException;
@@ -157,6 +158,13 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
                     ).asException()
             );
         }
+    }
+
+    @Override
+    public void deletePainting(DeletePaintingRequest request, StreamObserver<Empty> responseObserver) {
+        paintingRepository.deleteById(UUID.fromString(request.getId()));
+        responseObserver.onNext(Empty.getDefaultInstance());
+        responseObserver.onCompleted();
     }
 
     public Painting toGrpc(PaintingEntity entity) {

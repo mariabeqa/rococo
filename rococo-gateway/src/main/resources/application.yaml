@@ -28,6 +28,7 @@ grpc:
     grpcUserdataClient:
       address: 'static://localhost:8802'
       negotiationType: PLAINTEXT
+      .max-inbound-message-size: 9155241000
 
     grpcCountriesClient:
       address: 'static://localhost:8806'
@@ -36,20 +37,17 @@ grpc:
     grpcMuseumClient:
       address: 'static://localhost:8806'
       negotiationType: PLAINTEXT
-      .max-inbound-message-size:
-        9155241000
+      .max-inbound-message-size: 9155241000
 
     grpcArtistClient:
       address: 'static://localhost:8808'
       negotiationType: PLAINTEXT
-      .max-inbound-message-size:
-        9155241000
+      .max-inbound-message-size: 9155241000
 
     grpcPaintingClient:
       address: 'static://localhost:8810'
       negotiationType: PLAINTEXT
-      .max-inbound-message-size:
-        9155241000
+      .max-inbound-message-size: 9155241000
 
 rococo-ui:
   uri: http://127.0.0.1:3000
