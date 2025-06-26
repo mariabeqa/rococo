@@ -22,7 +22,7 @@ public class MuseumGrpcTest {
 //                        null,
 //                        "Marias Museum",
 //                        "Marias Museum description",
-//                        ImageUtil.getEncodedImageFromClasspath("img/museum/русский_музей.jpg"),
+//                        ImageUtil.getEncodedImageFromClasspath("img/museum/russian_museum.jpg"),
 //                        new GeoLocationJson(
 //                                "Омск",
 //                                new CountryJson(

@@ -29,7 +29,7 @@ public class MuseumWebTest {
     private static final String CITY_NAME_LENGTH_ERROR_MSG = "Город не может быть короче 3 символов";
     private static final String DESCRIPTION_LENGTH_ERROR_MSG = "Описание не может быть короче 10 символов";
     private static final String MUSEUM_EDITED_MSG = "Обновлен музей: %s";
-    private static final String MUSEUM_PHOTO_PATH = "img/museum/русский_музей.jpg";
+    private static final String MUSEUM_PHOTO_PATH = "img/museum/russian_museum.jpg";
 
     @Test
     @DisplayName("User should be able to add a new Museum")
@@ -174,7 +174,7 @@ public class MuseumWebTest {
     @TestMuseum
     void shouldBeAbleToEditMuseumPicture(BufferedImage expectedAvatar, MuseumJson museum) throws IOException {
         final String museumId = museum.id().toString();
-        String path = "img/museum/русский_музей_новая.jpeg";
+        String path = "img/museum/russian_museum_new.jpeg";
 
         MuseumPage museumPage = Selenide.open(MuseumPage.url(museumId), MuseumPage.class)
                 .editMuseum()

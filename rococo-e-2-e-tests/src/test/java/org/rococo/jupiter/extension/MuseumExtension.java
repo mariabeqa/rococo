@@ -25,7 +25,7 @@ import static org.rococo.utils.RandomDataUtils.*;
 public class MuseumExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(MuseumExtension.class);
-    private static final String MUSEUM_PHOTO_PATH = "img/museum/русский_музей.jpg";
+    private static final String MUSEUM_PHOTO_PATH = "img/museum/russian_museum.jpg";
     private static final String MUSEUM_CITY = "Санкт-Петербург";
     private final MuseumGrpcClient museumGrpcClient = new MuseumGrpcClient();
 
