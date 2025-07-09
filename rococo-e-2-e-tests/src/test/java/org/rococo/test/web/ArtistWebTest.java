@@ -77,7 +77,7 @@ public class ArtistWebTest {
     @DisplayName("User should be able to edit Artist name and bio")
     @ApiLogin(testUser = @TestUser())
     @TestArtist
-    void shouldBeAbleToEditArtistTitleAndBio(ArtistJson artist) {
+    void shouldBeAbleToEditArtistNameAndBio(ArtistJson artist) {
         final String newName = artist.name() + " edited";
         final String newBio = artist.biography() + " edited";
         final String artistId = artist.id().toString();

@@ -24,6 +24,7 @@ dependencies {
     implementation "net.devh:grpc-server-spring-boot-starter:${project.ext.springGrpcVersion}"
     implementation "net.devh:grpc-client-spring-boot-starter:${project.ext.springGrpcVersion}"
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'io.grpc:grpc-testing:1.64.0'
     //DB
     runtimeOnly "mysql:mysql-connector-java:${project.ext.mysqlDriverVersion}"
 

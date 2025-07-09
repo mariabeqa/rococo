@@ -3,11 +3,7 @@ package org.rococo.jupiter.extension;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
-import org.rococo.api.grpc.ArtistGrpcClient;
-import org.rococo.api.grpc.MuseumGrpcClient;
 import org.rococo.api.grpc.PaintingGrpcClient;
-import org.rococo.jupiter.annotation.TestArtist;
-import org.rococo.jupiter.annotation.TestMuseum;
 import org.rococo.jupiter.annotation.TestPainting;
 import org.rococo.model.ArtistJson;
 import org.rococo.model.MuseumJson;
@@ -25,8 +21,6 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver,
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(PaintingExtension.class);
     private static final String PAINTING_PHOTO_PATH = "img/painting/dnepr.jpg";
     private final PaintingGrpcClient paintingClient = new PaintingGrpcClient();
-    private final MuseumGrpcClient museumGrpcClient = new MuseumGrpcClient();
-    private final ArtistGrpcClient artistGrpcClient = new ArtistGrpcClient();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -65,28 +59,6 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver,
                             context.getStore(NAMESPACE).get(context.getUniqueId(), PaintingJson.class)
                     );
                 });
-
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestMuseum.class)
-                .ifPresent(museumAnno -> {
-                            if (museumAnno.removeAfterTest()) {
-                                ExtensionContext ctx = TestMethodContextExtension.context();
-                                museumGrpcClient.deleteMuseum(
-                                        ctx.getStore(MuseumExtension.NAMESPACE).get(ctx.getUniqueId(), MuseumJson.class)
-                                );
-                            }
-                        }
-                );
-
-        AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestArtist.class)
-                .ifPresent(artistAnno -> {
-                            if (artistAnno.removeAfterTest()) {
-                                ExtensionContext ctx = TestMethodContextExtension.context();
-                                artistGrpcClient.deleteArtist(
-                                        ctx.getStore(ArtistExtension.NAMESPACE).get(ctx.getUniqueId(), ArtistJson.class)
-                                );
-                            }
-                        }
-                );
     }
 
     @Override

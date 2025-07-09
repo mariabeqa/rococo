@@ -40,105 +40,217 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
 
     @Override
     public void getAll(PaintingsPageRequest request, StreamObserver<PaintingsPageResponse> responseObserver) {
-        Page<PaintingEntity> paintings = request.getTitle().isEmpty()
+        try {
+            int page = request.getPage();
+            int size = request.getSize();
+
+            if (page < 0 || size <= 0) {
+                throw new IllegalArgumentException("Invalid pagination parameters");
+            }
+
+            Page<PaintingEntity> paintings = request.getTitle().isEmpty()
                 ? paintingRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
                 : paintingRepository.findAllByTitleContainsIgnoreCase(
                 request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
-        );
+            );
 
-        Page<Painting> paintingPages = new PageImpl<>(
+            Page<Painting> paintingPages = new PageImpl<>(
                 paintings.stream()
-                        .map(pe -> toGrpc(pe))
-                        .collect(Collectors.toList())
-        );
+                    .map(this::toGrpc)
+                    .collect(Collectors.toList())
+            );
 
-        responseObserver.onNext(
+            responseObserver.onNext(
                 PaintingsPageResponse.newBuilder()
-                        .addAllPaintings(paintingPages.getContent())
-                        .setTotalElements(paintingPages.getTotalElements())
-                        .setTotalPages(paintingPages.getTotalPages())
-                        .setFirst(paintingPages.isFirst())
-                        .setLast(paintingPages.isLast())
-                        .setSize(paintingPages.getSize())
-                        .build()
-        );
-        responseObserver.onCompleted();
+                    .addAllPaintings(paintingPages.getContent())
+                    .setTotalElements(paintingPages.getTotalElements())
+                    .setTotalPages(paintingPages.getTotalPages())
+                    .setFirst(paintingPages.isFirst())
+                    .setLast(paintingPages.isLast())
+                    .setSize(paintingPages.getSize())
+                    .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (IllegalArgumentException ex) {
+
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(ex.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void findPaintingById(PaintingByIdRequest request, StreamObserver<PaintingResponse> responseObserver) {
-        Optional<PaintingEntity> byId = paintingRepository.findById(
+        try {
+            Optional<PaintingEntity> byId = paintingRepository.findById(
                 UUID.fromString(request.getPaintingId())
-        );
+            );
 
-        if (byId.isPresent()) {
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Painting with id '%s' not found", request.getPaintingId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
             responseObserver.onNext(
-                    PaintingResponse.newBuilder()
-                            .setPainting(toGrpc(byId.get()))
-                            .build()
+                PaintingResponse.newBuilder()
+                    .setPainting(toGrpc(byId.get()))
+                    .build()
             );
             responseObserver.onCompleted();
-        } else {
+
+        } catch (Exception e) {
             responseObserver.onError(
-                    Status.NOT_FOUND.withDescription(
-                            String.format("Painting with the id '%s' not found", request.getPaintingId())
-                    ).asException());
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void findPaintingByAuthorId(PaintingByAuthorIdPageRequest request, StreamObserver<PaintingsPageResponse> responseObserver) {
-        Page<PaintingEntity> allByArtistId = paintingRepository.findAllByArtistId(
-                UUID.fromString(request.getAuthorId()),
+        try {
+
+            if (request.getAuthorId().isBlank()) {
+                throw new IllegalArgumentException("Author id must not be blank");
+            }
+
+            Artist artist = getArtistById(request.getAuthorId());
+
+            Page<PaintingEntity> allByArtistId = paintingRepository.findAllByArtistId(
+                UUID.fromString(artist.getId()),
                 PageRequest.of(request.getPage(), request.getSize())
-        );
+            );
 
-        Page<Painting> paintingPages = new PageImpl<>(
+            Page<Painting> paintingPages = new PageImpl<>(
                 allByArtistId.stream()
-                        .map(pe -> toGrpc(pe))
-                        .collect(Collectors.toList())
-        );
+                    .map(pe -> toGrpc(pe))
+                    .collect(Collectors.toList())
+            );
 
-        responseObserver.onNext(
+            responseObserver.onNext(
                 PaintingsPageResponse.newBuilder()
-                        .addAllPaintings(paintingPages.getContent())
-                        .setTotalElements(paintingPages.getTotalElements())
-                        .setTotalPages(paintingPages.getTotalPages())
-                        .setFirst(paintingPages.isFirst())
-                        .setLast(paintingPages.isLast())
-                        .setSize(paintingPages.getSize())
-                        .build()
-        );
-        responseObserver.onCompleted();
+                    .addAllPaintings(paintingPages.getContent())
+                    .setTotalElements(paintingPages.getTotalElements())
+                    .setTotalPages(paintingPages.getTotalPages())
+                    .setFirst(paintingPages.isFirst())
+                    .setLast(paintingPages.isLast())
+                    .setSize(paintingPages.getSize())
+                    .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (NotFoundException ex) {
+            responseObserver.onError(
+                Status.NOT_FOUND
+                    .withDescription(ex.getMessage())
+                    .asRuntimeException()
+            );
+
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(e.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void addPainting(AddPaintingRequest request, StreamObserver<PaintingResponse> responseObserver) {
-        PaintingEntity entityToSave = new PaintingEntity();
-        entityToSave.setTitle(request.getTitle());
-        entityToSave.setDescription(request.getDescription());
-        entityToSave.setContent(request.getContent().getBytes(StandardCharsets.UTF_8));
+        try {
+            if (request.getTitle().isBlank()) {
+                throw new IllegalArgumentException("Title must not be blank");
+            }
 
-        Artist artist = getArtistById(request.getArtistId().getId());
-        entityToSave.setArtistId(UUID.fromString(artist.getId()));
+            if (request.getDescription().isBlank()) {
+                throw new IllegalArgumentException("Description must not be blank");
+            }
 
-        Museum museum = getMuseumById(request.getMuseumId().getId());
-        entityToSave.setMuseumId(UUID.fromString(museum.getId()));
+            if (request.getContent().isBlank()) {
+                throw new IllegalArgumentException("Content must not be blank");
+            }
 
-        PaintingEntity saved = paintingRepository.save(entityToSave);
+            PaintingEntity entityToSave = new PaintingEntity();
+            entityToSave.setTitle(request.getTitle());
+            entityToSave.setDescription(request.getDescription());
+            entityToSave.setContent(request.getContent().getBytes(StandardCharsets.UTF_8));
 
-        responseObserver.onNext(PaintingResponse.newBuilder()
+            Artist artist = getArtistById(request.getArtistId().getId());
+            entityToSave.setArtistId(UUID.fromString(artist.getId()));
+
+            Museum museum = getMuseumById(request.getMuseumId().getId());
+            entityToSave.setMuseumId(UUID.fromString(museum.getId()));
+
+            PaintingEntity saved = paintingRepository.save(entityToSave);
+
+            responseObserver.onNext(PaintingResponse.newBuilder()
                 .setPainting(toGrpc(saved))
                 .build()
-        );
-        responseObserver.onCompleted();
+            );
+            responseObserver.onCompleted();
+        } catch (NotFoundException ex) {
+            responseObserver.onError(
+                Status.NOT_FOUND
+                    .withDescription(ex.getMessage())
+                    .asRuntimeException()
+            );
+        }
+        catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(e.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void updatePainting(PaintingRequest request, StreamObserver<PaintingResponse> responseObserver) {
-        Optional<PaintingEntity> paintingEntity = paintingRepository.findById(UUID.fromString(request.getPainting().getId()));
-        if (paintingEntity.isPresent()) {
-            PaintingEntity entityToUpdate = paintingEntity.get();
+
+        try {
+            Optional<PaintingEntity> byId = paintingRepository.findById(UUID.fromString(request.getPainting().getId()));
+
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Painting with id '%s' not found", request.getPainting().getId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
+            PaintingEntity entityToUpdate = byId.get();
             entityToUpdate.setTitle(request.getPainting().getTitle());
             entityToUpdate.setDescription(request.getPainting().getDescription());
             entityToUpdate.setContent(request.getPainting().getContent().getBytes(StandardCharsets.UTF_8));
@@ -146,25 +258,47 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
             entityToUpdate.setMuseumId(UUID.fromString(request.getPainting().getMuseum().getId()));
             PaintingEntity saved = paintingRepository.save(entityToUpdate);
             responseObserver.onNext(
-                    PaintingResponse.newBuilder()
-                            .setPainting(toGrpc(saved))
-                            .build()
+                PaintingResponse.newBuilder()
+                    .setPainting(toGrpc(saved))
+                    .build()
             );
             responseObserver.onCompleted();
-        } else {
+
+        } catch (Exception e) {
             responseObserver.onError(
-                    Status.NOT_FOUND.withDescription(
-                            String.format("Painting with the id '%s' not found", request.getPainting().getId())
-                    ).asException()
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
             );
         }
     }
 
     @Override
     public void deletePainting(DeletePaintingRequest request, StreamObserver<Empty> responseObserver) {
-        paintingRepository.deleteById(UUID.fromString(request.getId()));
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
+        try {
+            Optional<PaintingEntity> byId = paintingRepository.findById(UUID.fromString(request.getId()));
+
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Painting with id '%s' not found", request.getId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
+            paintingRepository.deleteById(UUID.fromString(request.getId()));
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     public Painting toGrpc(PaintingEntity entity) {
@@ -204,7 +338,7 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
     private @Nonnull Artist getArtistById(String artistId) {
         ArtistResponse artistResponse = artistGrpcClient.findArtistById(artistId)
                 .orElseThrow(
-                        () -> new NotFoundException(String.format("Художник c id '%s' не найден", artistId))
+                        () -> new NotFoundException(String.format("Artist with id '%s' not found", artistId))
                 );
         return artistResponse.getArtist();
     }

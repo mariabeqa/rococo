@@ -18,6 +18,13 @@ dependencies {
     implementation "net.devh:grpc-client-spring-boot-starter:${project.ext.springGrpcVersion}"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test:6.5.0'
+    testImplementation "org.wiremock:wiremock:${project.ext.wiremockVersion}"
+    testImplementation "org.wiremock:wiremock-jetty12:${project.ext.wiremockVersion}"
+    implementation 'org.wiremock:wiremock-grpc-extension-jetty12:0.10.0'
+    //Don't remove. Need to resolve org.eclipse.jetty version conflict
+    implementation "com.tailrocks.graphql:graphql-datetime-spring-boot-starter:${project.ext.springGraphqlDateTimeVersion}"
+
 }
 
 tasks.named('test') {

@@ -37,7 +37,7 @@ public class ArtistEntity implements Serializable {
     public static @Nullable Artist toGrpc(@Nullable ArtistEntity entity) {
         return (entity != null)
                 ? Artist.newBuilder()
-                .setId(entity.getId().toString())
+                .setId(entity.getId() != null ? entity.getId().toString() : "")
                 .setName(entity.getName())
                 .setBio(entity.getBiography())
                 .setPhoto(new String(entity.getPhoto(), UTF_8))

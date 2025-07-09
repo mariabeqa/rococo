@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: rococo-gateway
+
+rococo-ui:
+  uri: http://127.0.0.1:3000
+
+grpc:
+  client:
+    grpcUserdataClient:
+      address: 'static://localhost:8802'
+      negotiationType: PLAINTEXT
+
+    grpcCountriesClient:
+      address: 'static://localhost:8806'
+      negotiationType: PLAINTEXT
+
+    grpcMuseumClient:
+      address: 'static://localhost:8806'
+      negotiationType: PLAINTEXT
+
+    grpcArtistClient:
+      address: 'static://localhost:8808'
+      negotiationType: PLAINTEXT
+
+    grpcPaintingClient:
+      address: 'static://localhost:8810'
+      negotiationType: PLAINTEXT

@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group = 'guru.qa'
+group = 'org.rococo'
 
 allprojects {
     apply plugin: 'java'
@@ -22,15 +22,15 @@ subprojects {
     ext {
         lombokVersion = '1.18.34'
         springKafkaVersion = '3.2.2'
-        postgresDriverVersion = '42.7.3'
         mysqlDriverVersion = '8.0.33'
         springGrpcVersion = '3.1.0.RELEASE'
-        lombokVersion = '1.18.34'
         openApiVersion = '2.6.0'
         protobufVersion = '3.25.3'
         grpcVersion = '1.63.0'
         h2Version = '2.3.232'
         mockitoVersion = '5.12.0'
+        wiremockVersion = '3.10.0'
+        springGraphqlDateTimeVersion = '6.0.0'
     }
 }
 

@@ -1,5 +1,6 @@
 package org.rococo.service;
 
+import io.grpc.Status;
 import org.rococo.data.UserEntity;
 import org.rococo.data.repository.UserRepository;
 import org.rococo.exception.NotFoundException;
@@ -17,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static org.rococo.data.UserEntity.toGrpc;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -58,39 +61,84 @@ public class UserGrpcService extends RococoUserdataServiceGrpc.RococoUserdataSer
 
     @Override
     public void getCurrent(UsernameRequest request, StreamObserver<UserResponse> responseObserver) {
-        UserEntity byUsername = userRepository.findByUsername(request.getUsername()).orElseGet(
+        try {
+            if (request.getUsername().isBlank()) {
+                throw new IllegalArgumentException("Username must not be blank");
+            }
+
+            UserEntity byUsername = userRepository.findByUsername(request.getUsername()).orElseGet(
                 () -> {
                     UserEntity newUser = new UserEntity();
                     newUser.setUsername(request.getUsername());
                     return newUser;
                 }
-        );
+            );
 
-        responseObserver.onNext(
+            responseObserver.onNext(
                 UserResponse.newBuilder()
-                        .setUser(toGrpc(byUsername))
-                        .build()
-        );
-        responseObserver.onCompleted();
+                    .setUser(toGrpc(byUsername))
+                    .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(e.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void updateUser(UserRequest request, StreamObserver<UserResponse> responseObserver) {
-        UserEntity userToUpdate = userRepository.findByUsername(request.getUser().getUsername()).orElseThrow(
-                () -> new NotFoundException(String.format("User with username '%s' not found", request.getUser().getUsername()))
-        );
+        try {
+            Optional<UserEntity> byUsername = userRepository.findByUsername(request.getUser().getUsername());
 
-        userToUpdate.setFirstname(request.getUser().getFirstname());
-        userToUpdate.setLastname(request.getUser().getLastname());
-        userToUpdate.setAvatar(request.getUser().getAvatar().isEmpty() ? new byte[0] : request.getUser().getAvatar().getBytes(UTF_8));
-        UserEntity savedUser = userRepository.save(userToUpdate);
+            if (byUsername.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("User with username '%s' not found", request.getUser().getUsername()))
+                        .asRuntimeException()
+                );
+                return;
+            }
 
-        responseObserver.onNext(
+            UserEntity userToUpdate = byUsername.get();
+            userToUpdate.setFirstname(request.getUser().getFirstname());
+            userToUpdate.setLastname(request.getUser().getLastname());
+            userToUpdate.setAvatar(request.getUser().getAvatar().isEmpty() ? new byte[0] : request.getUser().getAvatar().getBytes(UTF_8));
+            UserEntity savedUser = userRepository.save(userToUpdate);
+
+            responseObserver.onNext(
                 UserResponse.newBuilder()
-                        .setUser(toGrpc(savedUser))
-                        .build()
-        );
-        responseObserver.onCompleted();
+                    .setUser(toGrpc(savedUser))
+                    .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (NotFoundException ex) {
+            responseObserver.onError(
+                Status.NOT_FOUND
+                    .withDescription(ex.getMessage())
+                    .asRuntimeException()
+            );
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
 }

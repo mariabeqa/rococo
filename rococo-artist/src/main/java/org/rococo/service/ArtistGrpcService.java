@@ -26,50 +26,99 @@ public class ArtistGrpcService extends RococoArtistsServiceGrpc.RococoArtistsSer
 
     @Override
     public void getAll(ArtistsPageRequest request, StreamObserver<ArtistsPageResponse> responseObserver) {
-        Page<ArtistEntity> artists = request.getTitle().isEmpty()
-                ? artistRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
-                : artistRepository.findAllByNameContainsIgnoreCase(
-                request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
-        );
 
-        Page<Artist> artistPages = artists.map(ArtistEntity::toGrpc);
+        try {
+            int page = request.getPage();
+            int size = request.getSize();
 
-        responseObserver.onNext(
-                ArtistsPageResponse.newBuilder()
-                        .addAllArtists(artistPages.getContent())
-                        .setTotalElements(artistPages.getTotalElements())
-                        .setTotalPages(artistPages.getTotalPages())
-                        .setFirst(artistPages.isFirst())
-                        .setLast(artistPages.isLast())
-                        .setSize(artistPages.getSize())
-                        .build()
-        );
-        responseObserver.onCompleted();
+            if (page < 0 || size <= 0) {
+                throw new IllegalArgumentException("Invalid pagination parameters");
+            }
+
+            Page<ArtistEntity> artists = request.getTitle().isEmpty()
+                    ? artistRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
+                    : artistRepository.findAllByNameContainsIgnoreCase(
+                    request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
+            );
+
+            Page<Artist> artistPages = artists.map(ArtistEntity::toGrpc);
+
+            responseObserver.onNext(
+                    ArtistsPageResponse.newBuilder()
+                            .addAllArtists(artistPages.getContent())
+                            .setTotalElements(artistPages.getTotalElements())
+                            .setTotalPages(artistPages.getTotalPages())
+                            .setFirst(artistPages.isFirst())
+                            .setLast(artistPages.isLast())
+                            .setSize(artistPages.getSize())
+                            .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (IllegalArgumentException ex) {
+
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT
+                            .withDescription(ex.getMessage())
+                            .asRuntimeException()
+            );
+        } catch (Exception e) {
+
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void findArtistById(ArtistByIdRequest request, StreamObserver<ArtistResponse> responseObserver) {
-        Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtistId()));
 
-        if (byId.isPresent()) {
+        try {
+            Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtistId()));
+
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription(String.format("Artist with id '%s' not found", request.getArtistId()))
+                                .asRuntimeException()
+                );
+                return;
+            }
+
             responseObserver.onNext(
                     ArtistResponse.newBuilder()
                             .setArtist(ArtistEntity.toGrpc(byId.get()))
                             .build()
             );
             responseObserver.onCompleted();
-        } else {
-            responseObserver.onError(Status.NOT_FOUND.withDescription(
-                    String.format("Artist with id '%s' not found", request.getArtistId())
-            ).asException());
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void updateArtist(ArtistRequest request, StreamObserver<ArtistResponse> responseObserver) {
-        Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtist().getId()));
+        try {
+            Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtist().getId()));
 
-        if (byId.isPresent()) {
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription(String.format("Artist with id '%s' not found", request.getArtist().getId()))
+                                .asRuntimeException()
+                );
+                return;
+            }
+
             ArtistEntity artist = new ArtistEntity();
             artist.setId(UUID.fromString(request.getArtist().getId()));
             artist.setName(request.getArtist().getName());
@@ -84,33 +133,86 @@ public class ArtistGrpcService extends RococoArtistsServiceGrpc.RococoArtistsSer
                             .build()
             );
             responseObserver.onCompleted();
-        } else {
-            responseObserver.onError(Status.NOT_FOUND.withDescription(
-                    String.format("Artist with id '%s' not found", request.getArtist().getId())
-            ).asException());
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void addArtist(ArtistRequest request, StreamObserver<ArtistResponse> responseObserver) {
-        ArtistEntity artist = new ArtistEntity();
-        artist.setName(request.getArtist().getName());
-        artist.setBiography(request.getArtist().getBio());
-        artist.setPhoto(request.getArtist().getPhoto().getBytes());
+        try {
+            if (request.getArtist().getName().isBlank()) {
+                throw new IllegalArgumentException("Name must not be blank");
+            }
 
-        ArtistEntity saved = artistRepository.save(artist);
-        responseObserver.onNext(
-                ArtistResponse.newBuilder()
-                        .setArtist(ArtistEntity.toGrpc(saved))
-                        .build()
-        );
-        responseObserver.onCompleted();
+            if (request.getArtist().getBio().isBlank()) {
+                throw new IllegalArgumentException("Biography must not be blank");
+            }
+
+            if (request.getArtist().getPhoto().isBlank()) {
+                throw new IllegalArgumentException("Photo must not be blank");
+            }
+
+            ArtistEntity artist = new ArtistEntity();
+            artist.setName(request.getArtist().getName());
+            artist.setBiography(request.getArtist().getBio());
+            artist.setPhoto(request.getArtist().getPhoto().getBytes());
+
+            ArtistEntity saved = artistRepository.save(artist);
+            responseObserver.onNext(
+                    ArtistResponse.newBuilder()
+                            .setArtist(ArtistEntity.toGrpc(saved))
+                            .build()
+            );
+            responseObserver.onCompleted();
+
+        } catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                    Status.INVALID_ARGUMENT
+                            .withDescription(e.getMessage())
+                            .asRuntimeException()
+            );
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void deleteArtist(ArtistRequest request, StreamObserver<Empty> responseObserver) {
-        artistRepository.deleteById(UUID.fromString(request.getArtist().getId()));
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
+        try {
+            Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtist().getId()));
+
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription(String.format("Artist with id '%s' not found", request.getArtist().getId()))
+                                .asRuntimeException()
+                );
+                return;
+            }
+
+            artistRepository.deleteById(UUID.fromString(request.getArtist().getId()));
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
+        }
     }
 }

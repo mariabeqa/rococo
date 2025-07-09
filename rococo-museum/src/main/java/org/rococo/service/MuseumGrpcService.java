@@ -33,55 +33,101 @@ public class MuseumGrpcService extends RococoMuseumsServiceGrpc.RococoMuseumsSer
 
     @Override
     public void getAll(MuseumsPageRequest request, StreamObserver<MuseumsPageResponse> responseObserver) {
-        Page<MuseumEntity> museums = request.getTitle().isEmpty()
+        try {
+            int page = request.getPage();
+            int size = request.getSize();
+
+            if (page < 0 || size <= 0) {
+                throw new IllegalArgumentException("Invalid pagination parameters");
+            }
+
+            Page<MuseumEntity> museums = request.getTitle().isEmpty()
                 ? museumRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
                 : museumRepository.findAllByTitleContainsIgnoreCase(
                 request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
-        );
+            );
 
-        Page<Museum> museumPages = museums.map(MuseumEntity::toGrpc);
+            Page<Museum> museumPages = museums.map(MuseumEntity::toGrpc);
 
-        responseObserver.onNext(
+            responseObserver.onNext(
                 MuseumsPageResponse.newBuilder()
-                        .addAllMuseums(museumPages.getContent())
-                        .setTotalElements(museumPages.getTotalElements())
-                        .setTotalPages(museumPages.getTotalPages())
-                        .setFirst(museumPages.isFirst())
-                        .setLast(museumPages.isLast())
-                        .setSize(museumPages.getSize())
-                        .build()
-        );
-        responseObserver.onCompleted();
+                    .addAllMuseums(museumPages.getContent())
+                    .setTotalElements(museumPages.getTotalElements())
+                    .setTotalPages(museumPages.getTotalPages())
+                    .setFirst(museumPages.isFirst())
+                    .setLast(museumPages.isLast())
+                    .setSize(museumPages.getSize())
+                    .build()
+            );
+            responseObserver.onCompleted();
+        } catch (IllegalArgumentException ex) {
+
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(ex.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     @Override
     public void findMuseumById(MuseumByIdRequest request, StreamObserver<MuseumResponse> responseObserver) {
-        Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseumId()));
+        try {
+            Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseumId()));
 
-        if (byId.isPresent()) {
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Museum with id '%s' not found", request.getMuseumId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
             responseObserver.onNext(
-                    MuseumResponse.newBuilder()
-                            .setMuseum(MuseumEntity.toGrpc(byId.get()))
-                            .build()
+                MuseumResponse.newBuilder()
+                    .setMuseum(MuseumEntity.toGrpc(byId.get()))
+                    .build()
             );
             responseObserver.onCompleted();
-        } else {
-            responseObserver.onError(Status.NOT_FOUND.withDescription(
-                    String.format("Museum with id '%s' not found", request.getMuseumId())
-            ).asException());
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void updateMuseum(MuseumRequest request, StreamObserver<MuseumResponse> responseObserver) {
-        Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseum().getId()));
+        try {
+            Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseum().getId()));
 
-        if (byId.isPresent()) {
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Museum with id '%s' not found", request.getMuseum().getId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
             MuseumEntity museum = new MuseumEntity();
             String countryId = request.getMuseum().getGeo().getCountry().getId();
             CountryEntity country = !countryId.isEmpty()
-                    ? getRequiredCountry(UUID.fromString(countryId))
-                    : getRequiredCountry(request.getMuseum().getGeo().getCountry().getName());
+                ? getRequiredCountry(UUID.fromString(countryId))
+                : getRequiredCountry(request.getMuseum().getGeo().getCountry().getName());
             museum.setCountry(country);
             museum.setId(UUID.fromString(request.getMuseum().getId()));
             museum.setTitle(request.getMuseum().getTitle());
@@ -91,28 +137,50 @@ public class MuseumGrpcService extends RococoMuseumsServiceGrpc.RococoMuseumsSer
 
             MuseumEntity saved = museumRepository.save(museum);
             responseObserver.onNext(
-                    MuseumResponse.newBuilder()
-                            .setMuseum(MuseumEntity.toGrpc(saved))
-                            .build()
+                MuseumResponse.newBuilder()
+                    .setMuseum(MuseumEntity.toGrpc(saved))
+                    .build()
             );
             responseObserver.onCompleted();
-        } else {
-            responseObserver.onError(Status.NOT_FOUND.withDescription(
-                    String.format("Museum with id '%s' not found", request.getMuseum().getId())
-            ).asException());
+
+        } catch (NotFoundException ex) {
+            responseObserver.onError(
+                Status.NOT_FOUND
+                    .withDescription(String.format("Country with id '%s' not found",
+                        request.getMuseum().getGeo().getCountry().getId()))
+                    .asRuntimeException()
+            );
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void addMuseum(MuseumRequest request, StreamObserver<MuseumResponse> responseObserver) {
-        Optional<MuseumEntity> byTitle = museumRepository.findByTitle(request.getMuseum().getTitle());
+        try {
+            if (request.getMuseum().getTitle().isBlank()) {
+                throw new IllegalArgumentException("Title must not be blank");
+            }
 
-        if (byTitle.isEmpty()) {
+            if (request.getMuseum().getDescription().isBlank()) {
+                throw new IllegalArgumentException("Description must not be blank");
+            }
+
+            if (request.getMuseum().getPhoto().isBlank()) {
+                throw new IllegalArgumentException("Photo must not be blank");
+            }
+
             MuseumEntity museum = new MuseumEntity();
             String countryId = request.getMuseum().getGeo().getCountry().getId();
             CountryEntity country = !countryId.isEmpty()
-                    ? getRequiredCountry(UUID.fromString(countryId))
-                    : getRequiredCountry(request.getMuseum().getGeo().getCountry().getName());
+                ? getRequiredCountry(UUID.fromString(countryId))
+                : getRequiredCountry(request.getMuseum().getGeo().getCountry().getName());
             museum.setCountry(country);
             museum.setTitle(request.getMuseum().getTitle());
             museum.setDescription(request.getMuseum().getDescription());
@@ -121,25 +189,62 @@ public class MuseumGrpcService extends RococoMuseumsServiceGrpc.RococoMuseumsSer
 
             MuseumEntity saved = museumRepository.save(museum);
             responseObserver.onNext(
-                    MuseumResponse.newBuilder()
-                            .setMuseum(MuseumEntity.toGrpc(saved))
-                            .build()
+                MuseumResponse.newBuilder()
+                    .setMuseum(MuseumEntity.toGrpc(saved))
+                    .build()
 
             );
             responseObserver.onCompleted();
-        } else {
+        } catch (NotFoundException ex) {
             responseObserver.onError(
-                    Status.ALREADY_EXISTS.withDescription(
-                            String.format("Museum with the title '%s' already exists", request.getMuseum().getTitle())
-                    ).asException());
+                Status.NOT_FOUND
+                    .withDescription(String.format("Country with id '%s' not found",
+                        request.getMuseum().getGeo().getCountry().getId()))
+                    .asRuntimeException()
+            );
+        }
+        catch (IllegalArgumentException e) {
+            responseObserver.onError(
+                Status.INVALID_ARGUMENT
+                    .withDescription(e.getMessage())
+                    .asRuntimeException()
+            );
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void deleteMuseum(MuseumRequest request, StreamObserver<Empty> responseObserver) {
-        museumRepository.deleteById(UUID.fromString(request.getMuseum().getId()));
-        responseObserver.onNext(Empty.getDefaultInstance());
-        responseObserver.onCompleted();
+        try {
+            Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseum().getId()));
+
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                    Status.NOT_FOUND
+                        .withDescription(String.format("Museum with id '%s' not found", request.getMuseum().getId()))
+                        .asRuntimeException()
+                );
+                return;
+            }
+
+            museumRepository.deleteById(UUID.fromString(request.getMuseum().getId()));
+            responseObserver.onNext(Empty.getDefaultInstance());
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                Status.INTERNAL
+                    .withDescription("Internal server error")
+                    .withCause(e)
+                    .asRuntimeException()
+            );
+        }
     }
 
     private @Nonnull CountryEntity getRequiredCountry(@Nonnull UUID id) {

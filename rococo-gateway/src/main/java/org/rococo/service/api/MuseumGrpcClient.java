@@ -68,7 +68,7 @@ public class MuseumGrpcClient {
             MuseumRequest request = MuseumRequest.newBuilder()
                     .setMuseum(
                             Museum.newBuilder()
-                                    .setId(museum.id().toString())
+                                    .setId(String.valueOf(museum.id()))
                                     .setTitle(museum.title())
                                     .setDescription(museum.description())
                                     .setPhoto(museum.photo())
