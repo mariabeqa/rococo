@@ -41,4 +41,9 @@ public class MuseumController {
   public MuseumJson addMuseum(@RequestBody MuseumJson museum) {
     return museumGrpcClient.addMuseum(museum);
   }
+
+  @DeleteMapping()
+  public void deleteMuseum(@RequestParam String museumId) {
+    museumGrpcClient.deleteMuseum(museumId);
+  }
 }

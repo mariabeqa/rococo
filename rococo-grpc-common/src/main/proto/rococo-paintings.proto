@@ -17,7 +17,7 @@ service RococoPaintingsService {
   rpc FindPaintingByAuthorId (PaintingByAuthorIdPageRequest) returns (PaintingsPageResponse) {}
   rpc UpdatePainting(PaintingRequest) returns (PaintingResponse) {}
   rpc AddPainting(AddPaintingRequest) returns (PaintingResponse) {}
-  rpc DeletePainting (DeletePaintingRequest) returns (google.protobuf.Empty) {}
+  rpc DeletePainting (PaintingByIdRequest) returns (google.protobuf.Empty) {}
 }
 
 message PaintingRequest {

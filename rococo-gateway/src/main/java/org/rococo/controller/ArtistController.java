@@ -39,4 +39,9 @@ public class ArtistController {
     public ArtistJson addArtist(@RequestBody ArtistJson artist) {
         return artistGrpcClient.addArtist(artist);
     }
+
+    @DeleteMapping()
+    public void deleteArtist(@RequestParam String artistId) {
+        artistGrpcClient.deleteArtist(artistId);
+    }
 }

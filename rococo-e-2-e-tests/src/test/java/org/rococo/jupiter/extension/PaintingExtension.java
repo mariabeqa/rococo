@@ -4,6 +4,8 @@ import io.qameta.allure.Step;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.rococo.api.grpc.PaintingGrpcClient;
+import org.rococo.jupiter.annotation.TestArtist;
+import org.rococo.jupiter.annotation.TestMuseum;
 import org.rococo.jupiter.annotation.TestPainting;
 import org.rococo.model.ArtistJson;
 import org.rococo.model.MuseumJson;
@@ -12,8 +14,8 @@ import org.rococo.utils.ImageUtil;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static org.rococo.utils.RandomDataUtils.randomPaintingDescription;
-import static org.rococo.utils.RandomDataUtils.randomPaintingName;
+import static org.rococo.utils.data.RandomDataUtils.randomPaintingDescription;
+import static org.rococo.utils.data.RandomDataUtils.randomPaintingName;
 
 @ParametersAreNonnullByDefault
 public class PaintingExtension implements BeforeEachCallback, ParameterResolver, AfterEachCallback {
@@ -26,6 +28,15 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver,
     public void beforeEach(ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestPainting.class)
                 .ifPresent(paintingAnno -> {
+
+                    if (AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestMuseum.class).isEmpty()) {
+                        throw new IllegalStateException("@TestMuseum should be present in case of @TestPainting");
+                    }
+
+                    if (AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestArtist.class).isEmpty()) {
+                        throw new IllegalStateException("@TestArtist should be present in case of @TestPainting");
+                    }
+
                     final String title = "".equals(paintingAnno.title()) ?
                             randomPaintingName() : paintingAnno.title();
                     final String description = "".equals(paintingAnno.description()) ?
@@ -56,7 +67,7 @@ public class PaintingExtension implements BeforeEachCallback, ParameterResolver,
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), TestPainting.class)
                 .ifPresent(paintingAnno -> {
                     paintingClient.deletePainting(
-                            context.getStore(NAMESPACE).get(context.getUniqueId(), PaintingJson.class)
+                            context.getStore(NAMESPACE).get(context.getUniqueId(), PaintingJson.class).id().toString()
                     );
                 });
     }

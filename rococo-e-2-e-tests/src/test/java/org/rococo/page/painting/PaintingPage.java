@@ -6,7 +6,6 @@ import io.qameta.allure.Step;
 import org.rococo.model.PaintingJson;
 import org.rococo.page.BasePage;
 import org.rococo.page.component.Image;
-import org.rococo.page.component.Select;
 import org.rococo.page.component.painting.EditingPaintingForm;
 
 import javax.annotation.Nonnull;
@@ -44,6 +43,9 @@ public class PaintingPage extends BasePage<PaintingPage> {
     @Nonnull
     public EditingPaintingForm editPainting() {
         Selenide.sleep(2000);
+        if (!editBtn.isDisplayed()) {
+            Selenide.refresh();
+        }
         editBtn.click();
         return new EditingPaintingForm();
     }

@@ -1,4 +1,4 @@
-package org.rococo.utils;
+package org.rococo.utils.grpc;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.MessageOrBuilder;

@@ -2,28 +2,23 @@ package org.rococo.service;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
+import org.rococo.model.ErrorJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    @Value("${spring.application.name}")
-    private String appName;
-
-
     @ExceptionHandler(StatusRuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleGrpcException(StatusRuntimeException ex) {
+    public ResponseEntity<ErrorJson> handleGrpcException(StatusRuntimeException ex) {
         Status.Code code = ex.getStatus().getCode();
         String message = ex.getStatus().getDescription();
 
@@ -36,15 +31,16 @@ public class GlobalExceptionHandler {
             default -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
 
-        Map<String, Object> error = Map.of(
-                "timestamp", LocalDateTime.now(),
-                "status", httpStatus.value(),
-                "error", httpStatus.getReasonPhrase(),
-                "message", message,
-                "grpcCode", code.name()
+        ErrorJson errorJson = new ErrorJson(
+            code.name(),
+            httpStatus.getReasonPhrase(),
+            LocalDateTime.now().toString(),
+            message,
+            httpStatus.value()
         );
 
-        return new ResponseEntity<>(error, httpStatus);
+        LOG.warn("### Resolve Exception in @RestControllerAdvice ", ex);
+        return new ResponseEntity<>(errorJson, httpStatus);
     }
 }
 

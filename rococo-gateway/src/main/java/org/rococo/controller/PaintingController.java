@@ -47,4 +47,9 @@ public class PaintingController {
   public PaintingJson addPainting(@RequestBody PaintingJson painting) {
     return paintingGrpcClient.addPainting(painting);
   }
+
+  @DeleteMapping()
+  public void deletePainting(@RequestParam String paintingId) {
+    paintingGrpcClient.deletePainting(paintingId);
+  }
 }

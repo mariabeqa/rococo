@@ -339,13 +339,8 @@ public class GrpcMuseumServiceTest {
     @Test
     void deleteMuseumShouldReturnNotFoundIfMuseumNotFound() {
         final UUID notExistingMuseum = UUID.randomUUID();
-        final MuseumRequest request = MuseumRequest.newBuilder()
-            .setMuseum(
-                museumBuilder
-                    .withDefaults()
-                    .withId(notExistingMuseum.toString())
-                    .build()
-            )
+        final MuseumByIdRequest request = MuseumByIdRequest.newBuilder()
+            .setMuseumId(notExistingMuseum.toString())
             .build();
 
 

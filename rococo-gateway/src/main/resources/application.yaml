@@ -68,18 +68,22 @@ grpc:
     grpcUserdataClient:
       address: 'static://userdata.rococo.dc:8802'
       negotiationType: PLAINTEXT
+      .max-inbound-message-size: 9155241000
 
     grpcCountriesClient:
       address: 'static://countries.rococo.dc:8806'
       negotiationType: PLAINTEXT
+      .max-inbound-message-size: 9155241000
 
     grpcMuseumClient:
       address: 'static://museum.rococo.dc:8806'
       negotiationType: PLAINTEXT
+      .max-inbound-message-size: 9155241000
 
     grpcArtistClient:
       address: 'static://artist.rococo.dc:8808'
       negotiationType: PLAINTEXT
+      .max-inbound-message-size: 9155241000
 
     grpcPaintingClient:
       address: 'static://painting.rococo.dc:8810'

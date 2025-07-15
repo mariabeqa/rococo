@@ -13,7 +13,7 @@ import org.rococo.page.artist.ArtistsPage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static org.rococo.utils.RandomDataUtils.*;
+import static org.rococo.utils.data.RandomDataUtils.*;
 
 @WebTest
 public class ArtistWebTest {
@@ -23,7 +23,7 @@ public class ArtistWebTest {
     private static final String ARTIST_NAME_LENGTH_ERROR_MSG = "Имя не может быть короче 3 символов";
     private static final String ARTIST_BIO_LENGTH_ERROR_MSG = "Биография не может быть короче 10 символов";
     private static final String ARTIST_EDITED_MSG = "Обновлен художник: %s";
-    private static final String ARTIST_PHOTO_PATH = "img/artist/куинджи.jpg";
+    private static final String ARTIST_PHOTO_PATH = "img/artist/kuindzhi.jpg";
     private static final String ARTIST_PAINTING_PATH = "img/painting/raduga.jpg";
     private static final String ARTIST_BIO = "Русский музей – крупнейший в мире музей русского искусства, уникальный архитектурно-художественный комплекс в историческом центре Санкт-Петербурга.";
 
@@ -107,7 +107,7 @@ public class ArtistWebTest {
     @ApiLogin(testUser = @TestUser())
     @TestArtist
     void shouldBeAbleToEditArtistPhoto(BufferedImage expectedAvatar, ArtistJson artist) throws IOException {
-        String path = "img/artist/куинджи_новая.jpg";
+        String path = "img/artist/kuindzhi_new.jpg";
         final String artistId = artist.id().toString();
 
         ArtistPage artistPage = Selenide.open(ArtistPage.url(artistId), ArtistPage.class)

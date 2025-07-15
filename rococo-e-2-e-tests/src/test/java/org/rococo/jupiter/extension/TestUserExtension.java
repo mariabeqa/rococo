@@ -2,7 +2,7 @@ package org.rococo.jupiter.extension;
 
 import org.junit.jupiter.api.extension.*;
 import org.rococo.api.grpc.UserdataGrpcClient;
-import org.rococo.api.rest.AuthApiClient;
+import org.rococo.api.rest.impl.AuthApiClient;
 import org.rococo.jupiter.annotation.ApiLogin;
 import org.rococo.jupiter.annotation.TestUser;
 import org.rococo.model.TestData;
@@ -11,7 +11,7 @@ import org.rococo.model.UserJson;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static org.rococo.utils.RandomDataUtils.randomUsername;
+import static org.rococo.utils.data.RandomDataUtils.randomUsername;
 
 @ParametersAreNonnullByDefault
 public class TestUserExtension implements BeforeEachCallback, ParameterResolver {

@@ -5,6 +5,7 @@ import org.rococo.grpc.RococoUserdataServiceGrpc;
 import org.rococo.grpc.UsernameRequest;
 import org.rococo.model.UserJson;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 import static org.rococo.model.UserJson.fromGrpc;
@@ -21,7 +22,7 @@ public class UserdataGrpcClient extends GrpcClient {
 
 
     @Step("Get current user '{0}' from Userdata Grpc service")
-    public UserJson getCurrent(String username) {
+    public @Nonnull UserJson getCurrent(@Nonnull String username) {
         return fromGrpc(
                 userdataStub.getCurrent(
                         UsernameRequest.newBuilder()

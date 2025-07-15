@@ -1,5 +1,6 @@
 package org.rococo.service;
 
+import io.grpc.Status;
 import org.rococo.data.CountryEntity;
 import org.rococo.data.repository.CountryRepository;
 import org.rococo.exception.NotFoundException;
@@ -28,24 +29,34 @@ public class CountryGrpcService extends RococoCountriesServiceGrpc.RococoCountri
 
     @Override
     public void getAll(CountriesPageRequest request, StreamObserver<CountriesPageResponse> responseObserver) {
-        Page<CountryEntity> countries = (request.getTitle().isEmpty())
-                ? countryRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
-                : countryRepository.findAllByNameContainsIgnoreCase(
-                request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
-        );
-        Page<Country> countryPages = countries.map(CountryEntity::toGrpc);
+        try {
+            Page<CountryEntity> countries = (request.getTitle().isEmpty())
+                    ? countryRepository.findAll(PageRequest.of(request.getPage(), request.getSize()))
+                    : countryRepository.findAllByNameContainsIgnoreCase(
+                    request.getTitle(), PageRequest.of(request.getPage(), request.getSize())
+            );
+            Page<Country> countryPages = countries.map(CountryEntity::toGrpc);
 
-        responseObserver.onNext(
-                CountriesPageResponse
-                        .newBuilder()
-                        .addAllCountries(countryPages)
-                        .setTotalElements(countryPages.getTotalElements())
-                        .setTotalPages(countryPages.getTotalPages())
-                        .setFirst(countryPages.isFirst())
-                        .setLast(countryPages.isLast())
-                        .setSize(countryPages.getSize())
-                        .build());
-        responseObserver.onCompleted();
+            responseObserver.onNext(
+                    CountriesPageResponse
+                            .newBuilder()
+                            .addAllCountries(countryPages)
+                            .setTotalElements(countryPages.getTotalElements())
+                            .setTotalPages(countryPages.getTotalPages())
+                            .setFirst(countryPages.isFirst())
+                            .setLast(countryPages.isLast())
+                            .setSize(countryPages.getSize())
+                            .build());
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
+        }
     }
 
     @Override

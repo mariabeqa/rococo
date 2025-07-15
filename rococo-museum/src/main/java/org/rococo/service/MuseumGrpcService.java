@@ -220,20 +220,20 @@ public class MuseumGrpcService extends RococoMuseumsServiceGrpc.RococoMuseumsSer
     }
 
     @Override
-    public void deleteMuseum(MuseumRequest request, StreamObserver<Empty> responseObserver) {
+    public void deleteMuseum(MuseumByIdRequest request, StreamObserver<Empty> responseObserver) {
         try {
-            Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseum().getId()));
+            Optional<MuseumEntity> byId = museumRepository.findById(UUID.fromString(request.getMuseumId()));
 
             if (byId.isEmpty()) {
                 responseObserver.onError(
                     Status.NOT_FOUND
-                        .withDescription(String.format("Museum with id '%s' not found", request.getMuseum().getId()))
+                        .withDescription(String.format("Museum with id '%s' not found", request.getMuseumId()))
                         .asRuntimeException()
                 );
                 return;
             }
 
-            museumRepository.deleteById(UUID.fromString(request.getMuseum().getId()));
+            museumRepository.deleteById(UUID.fromString(request.getMuseumId()));
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
 

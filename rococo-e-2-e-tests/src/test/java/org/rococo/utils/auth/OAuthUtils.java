@@ -1,4 +1,4 @@
-package org.rococo.utils;
+package org.rococo.utils.auth;
 
 import lombok.SneakyThrows;
 

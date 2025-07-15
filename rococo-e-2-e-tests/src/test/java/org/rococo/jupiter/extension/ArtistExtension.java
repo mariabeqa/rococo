@@ -14,14 +14,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.rococo.utils.RandomDataUtils.randomArtistBio;
-import static org.rococo.utils.RandomDataUtils.randomArtistName;
+import static org.rococo.utils.data.RandomDataUtils.randomArtistBio;
+import static org.rococo.utils.data.RandomDataUtils.randomArtistName;
 
 @ParametersAreNonnullByDefault
 public class ArtistExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ArtistExtension.class);
-    private static final String ARTIST_PHOTO_PATH = "img/artist/куинджи.jpg";
+    private static final String ARTIST_PHOTO_PATH = "img/artist/kuindzhi.jpg";
     private final ArtistGrpcClient artistGrpcClient = new ArtistGrpcClient();
 
     @Override
@@ -60,7 +60,7 @@ public class ArtistExtension implements BeforeEachCallback, AfterEachCallback, P
         if (paintingAnno.isEmpty()) {
             artistAnno.ifPresent(artist -> {
                 if (artist.removeAfterTest()) {
-                    artistGrpcClient.deleteArtist(Objects.requireNonNull(getArtist()));
+                    artistGrpcClient.deleteArtist(Objects.requireNonNull(getArtist().id().toString()));
                 }
             });
         }

@@ -5,17 +5,18 @@ import com.codeborne.selenide.WebDriverRunner;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.openqa.selenium.Cookie;
-import org.rococo.api.rest.AuthApiClient;
+import org.rococo.api.rest.impl.AuthApiClient;
 import org.rococo.api.rest.core.ThreadSafeCookieStore;
 import org.rococo.config.Config;
 import org.rococo.jupiter.annotation.ApiLogin;
+import org.rococo.jupiter.annotation.Token;
 import org.rococo.model.UserJson;
 import org.rococo.page.MainPage;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
-public class ApiLoginExtension implements BeforeEachCallback {
+public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver {
 
     private static final Config CFG = Config.getInstance();
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ApiLoginExtension.class);
@@ -75,6 +76,17 @@ public class ApiLoginExtension implements BeforeEachCallback {
                         Selenide.open(MainPage.URL, MainPage.class).checkThatPageLoaded();
                     }
                 });
+    }
+
+    @Override
+    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return parameterContext.getParameter().getType().isAssignableFrom(String.class)
+            && AnnotationSupport.isAnnotated(parameterContext.getParameter(), Token.class);
+    }
+
+    @Override
+    public String resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+        return "Bearer " + getToken();
     }
 
     public static void setToken(String token) {

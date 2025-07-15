@@ -61,4 +61,19 @@ public class LoginWebTest {
                 .signOut()
                 .checkThatPageLoaded();
     }
+
+    @Test
+    @DisplayName("Successful logout")
+    @TestUser
+    void mainPageShouldBeDisplayToastMessage(UserJson user) {
+        Selenide.open(MainPage.URL, MainPage.class)
+                .toLoginPage()
+                .fillInLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .checkThatPageLoaded()
+                .header()
+                .profile()
+                .signOut()
+                .checkToastMessage("Сессия завершена");
+    }
 }

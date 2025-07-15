@@ -216,7 +216,7 @@ public class GrpcPaintingServiceTest {
     }
 
     @Test
-    void findPaintingByIAuthorIdShouldReturnCorrectPainting() {
+    void findPaintingByAuthorIdShouldReturnCorrectPainting() {
         final PaintingByAuthorIdPageRequest request = PaintingByAuthorIdPageRequest.newBuilder()
             .setAuthorId(ARTIST_ID.toString())
             .setPage(0)
@@ -498,13 +498,8 @@ public class GrpcPaintingServiceTest {
     @Test
     void deletePaintingShouldReturnNotFoundIfPaintingNotFound() {
         final UUID notExistingPainting = UUID.randomUUID();
-        final DeletePaintingRequest request = DeletePaintingRequest.newBuilder()
-            .setId(notExistingPainting.toString())
-            .setTitle(PAINTING_TITLE)
-            .setDescription(PAINTING_DESCRIPTION)
-            .setContent(ImageUtil.getEncodedImageFromClasspath(IMAGE_PATH))
-            .setMuseumId(MuseumId.newBuilder().setId(MUSEUM_ID.toString()).build())
-            .setArtistId(ArtistId.newBuilder().setId(ARTIST_ID.toString()).build())
+        final PaintingByIdRequest request = PaintingByIdRequest.newBuilder()
+            .setPaintingId(notExistingPainting.toString())
             .build();
 
         when(paintingRepository.findById(eq(notExistingPainting)))

@@ -189,20 +189,20 @@ public class ArtistGrpcService extends RococoArtistsServiceGrpc.RococoArtistsSer
     }
 
     @Override
-    public void deleteArtist(ArtistRequest request, StreamObserver<Empty> responseObserver) {
+    public void deleteArtist(ArtistByIdRequest request, StreamObserver<Empty> responseObserver) {
         try {
-            Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtist().getId()));
+            Optional<ArtistEntity> byId = artistRepository.findById(UUID.fromString(request.getArtistId()));
 
             if (byId.isEmpty()) {
                 responseObserver.onError(
                         Status.NOT_FOUND
-                                .withDescription(String.format("Artist with id '%s' not found", request.getArtist().getId()))
+                                .withDescription(String.format("Artist with id '%s' not found", request.getArtistId()))
                                 .asRuntimeException()
                 );
                 return;
             }
 
-            artistRepository.deleteById(UUID.fromString(request.getArtist().getId()));
+            artistRepository.deleteById(UUID.fromString(request.getArtistId()));
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
 

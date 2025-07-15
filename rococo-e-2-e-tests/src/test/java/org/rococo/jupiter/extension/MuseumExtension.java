@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.rococo.model.Countries.RUSSIA;
-import static org.rococo.utils.RandomDataUtils.*;
+import static org.rococo.utils.data.RandomDataUtils.*;
 
 @ParametersAreNonnullByDefault
 public class MuseumExtension implements BeforeEachCallback, AfterEachCallback, ParameterResolver {
@@ -79,7 +79,7 @@ public class MuseumExtension implements BeforeEachCallback, AfterEachCallback, P
             museumAnno.ifPresent(
                     museum -> {
                         if (museum.removeAfterTest()) {
-                            museumGrpcClient.deleteMuseum(Objects.requireNonNull(getMuseum()));
+                            museumGrpcClient.deleteMuseum(Objects.requireNonNull(getMuseum().id().toString()));
                         }
                     }
             );

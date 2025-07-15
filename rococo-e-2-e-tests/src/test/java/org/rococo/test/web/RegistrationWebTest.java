@@ -8,8 +8,8 @@ import org.rococo.jupiter.annotation.meta.WebTest;
 import org.rococo.model.UserJson;
 import org.rococo.page.MainPage;
 
-import static org.rococo.utils.RandomDataUtils.randomPassword;
-import static org.rococo.utils.RandomDataUtils.randomUsername;
+import static org.rococo.utils.data.RandomDataUtils.randomPassword;
+import static org.rococo.utils.data.RandomDataUtils.randomUsername;
 
 @WebTest
 public class RegistrationWebTest {

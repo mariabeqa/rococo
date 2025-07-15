@@ -14,7 +14,7 @@ service RococoMuseumsService {
   rpc FindMuseumById (MuseumByIdRequest) returns (MuseumResponse) {}
   rpc UpdateMuseum (MuseumRequest) returns (MuseumResponse) {}
   rpc AddMuseum (MuseumRequest) returns (MuseumResponse) {}
-  rpc DeleteMuseum (MuseumRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteMuseum (MuseumByIdRequest) returns (google.protobuf.Empty) {}
 }
 
 message MuseumRequest {

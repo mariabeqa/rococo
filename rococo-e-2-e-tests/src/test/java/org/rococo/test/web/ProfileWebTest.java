@@ -12,7 +12,7 @@ import org.rococo.page.MainPage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static org.rococo.utils.RandomDataUtils.randomName;
+import static org.rococo.utils.data.RandomDataUtils.randomName;
 
 @WebTest
 public class ProfileWebTest {

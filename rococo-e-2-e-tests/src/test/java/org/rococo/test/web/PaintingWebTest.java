@@ -14,8 +14,8 @@ import org.rococo.page.painting.PaintingsPage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import static org.rococo.utils.RandomDataUtils.randomPaintingDescription;
-import static org.rococo.utils.RandomDataUtils.randomPaintingName;
+import static org.rococo.utils.data.RandomDataUtils.randomPaintingDescription;
+import static org.rococo.utils.data.RandomDataUtils.randomPaintingName;
 
 @WebTest
 public class PaintingWebTest {

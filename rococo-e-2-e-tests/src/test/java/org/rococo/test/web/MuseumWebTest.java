@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static org.rococo.model.Countries.AUSTRALIA;
-import static org.rococo.utils.RandomDataUtils.randomMuseumTitle;
+import static org.rococo.utils.data.RandomDataUtils.randomMuseumTitle;
 
 @WebTest
 public class MuseumWebTest {

@@ -13,7 +13,7 @@ service RococoArtistsService {
   rpc FindArtistById (ArtistByIdRequest) returns (ArtistResponse) {}
   rpc UpdateArtist(ArtistRequest) returns (ArtistResponse) {}
   rpc AddArtist(ArtistRequest) returns (ArtistResponse) {}
-  rpc DeleteArtist (ArtistRequest) returns (google.protobuf.Empty) {}
+  rpc DeleteArtist (ArtistByIdRequest) returns (google.protobuf.Empty) {}
 }
 
 message ArtistRequest {

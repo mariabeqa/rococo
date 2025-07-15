@@ -323,14 +323,8 @@ public class GrpcArtistServiceTest {
     @Test
     void deleteArtistShouldReturnNotFoundIfUserNotFound() {
         final UUID notExistingArtist = UUID.randomUUID();
-        final ArtistRequest request = ArtistRequest.newBuilder()
-                .setArtist(
-                        Artist.newBuilder()
-                                .setId(notExistingArtist.toString())
-                                .setName(ARTIST_NAME)
-                                .setBio(ARTIST_BIO)
-                                .setPhoto(ImageUtil.getEncodedImageFromClasspath(IMAGE_PATH))
-                )
+        final ArtistByIdRequest request = ArtistByIdRequest.newBuilder()
+                .setArtistId(notExistingArtist.toString())
                 .build();
 
         when(artistRepository.findById(eq(notExistingArtist)))

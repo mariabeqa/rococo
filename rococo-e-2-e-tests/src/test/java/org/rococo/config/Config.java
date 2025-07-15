@@ -17,6 +17,12 @@ public interface Config {
   String authUrl();
 
   @Nonnull
+  String gatewayUrl();
+
+  @Nonnull
+  public String databaseAddress();
+
+  @Nonnull
   String userdataGrpcAddress();
 
   default int userdataGrpcPort() {

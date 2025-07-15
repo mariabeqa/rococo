@@ -69,10 +69,8 @@ dependencies {
     testImplementation "org.yaml:snakeyaml:${snakeYamlVersion}"
     // DB
     testImplementation "org.springframework:spring-jdbc:${springJdbcVersion}"
-//    testImplementation "org.postgresql:postgresql:${project.ext.postgresDriverVersion}"
-//    testImplementation "com.atomikos:transactions-jta:${atomicosVersion}:jakarta"
-//    testImplementation "com.atomikos:transactions-hibernate4:${atomicosVersion}:jakarta"
-//    testImplementation "com.atomikos:transactions-jdbc:${atomicosVersion}"
+    testImplementation "com.atomikos:transactions-jta:${atomicosVersion}:jakarta"
+    testImplementation "com.atomikos:transactions-hibernate4:${atomicosVersion}:jakarta"
     runtimeOnly "mysql:mysql-connector-java:${project.ext.mysqlDriverVersion}"
     testImplementation "p6spy:p6spy:${p6spyVersion}"
     testImplementation "org.hibernate:hibernate-core:${hibernateVersion}"

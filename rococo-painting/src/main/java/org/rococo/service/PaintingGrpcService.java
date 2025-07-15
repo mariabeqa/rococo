@@ -1,16 +1,16 @@
 package org.rococo.service;
 
 import com.google.protobuf.Empty;
+import io.grpc.Status;
+import io.grpc.stub.StreamObserver;
+import jakarta.annotation.Nonnull;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.rococo.data.PaintingEntity;
 import org.rococo.data.repository.PaintingRepository;
 import org.rococo.ex.NotFoundException;
 import org.rococo.grpc.*;
 import org.rococo.service.api.ArtistGrpcClient;
 import org.rococo.service.api.MuseumGrpcClient;
-import io.grpc.Status;
-import io.grpc.stub.StreamObserver;
-import jakarta.annotation.Nonnull;
-import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -134,13 +134,13 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
             Artist artist = getArtistById(request.getAuthorId());
 
             Page<PaintingEntity> allByArtistId = paintingRepository.findAllByArtistId(
-                UUID.fromString(artist.getId()),
+                UUID.fromString(request.getAuthorId()),
                 PageRequest.of(request.getPage(), request.getSize())
             );
 
             Page<Painting> paintingPages = new PageImpl<>(
                 allByArtistId.stream()
-                    .map(pe -> toGrpc(pe))
+                    .map(this::toGrpc)
                     .collect(Collectors.toList())
             );
 
@@ -275,20 +275,20 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
     }
 
     @Override
-    public void deletePainting(DeletePaintingRequest request, StreamObserver<Empty> responseObserver) {
+    public void deletePainting(PaintingByIdRequest request, StreamObserver<Empty> responseObserver) {
         try {
-            Optional<PaintingEntity> byId = paintingRepository.findById(UUID.fromString(request.getId()));
+            Optional<PaintingEntity> byId = paintingRepository.findById(UUID.fromString(request.getPaintingId()));
 
             if (byId.isEmpty()) {
                 responseObserver.onError(
                     Status.NOT_FOUND
-                        .withDescription(String.format("Painting with id '%s' not found", request.getId()))
+                        .withDescription(String.format("Painting with id '%s' not found", request.getPaintingId()))
                         .asRuntimeException()
                 );
                 return;
             }
 
-            paintingRepository.deleteById(UUID.fromString(request.getId()));
+            paintingRepository.deleteById(UUID.fromString(request.getPaintingId()));
             responseObserver.onNext(Empty.getDefaultInstance());
             responseObserver.onCompleted();
         } catch (Exception e) {
