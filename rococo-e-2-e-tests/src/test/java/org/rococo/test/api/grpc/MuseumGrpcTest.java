@@ -27,7 +27,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -40,7 +40,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH),
             result.photo());
         assertEquals(CITY, result.geo().city());
-        assertEquals( RUSSIA.getId(), result.geo().country().id());
+        assertEquals(RUSSIA_COUNTRY_ID, result.geo().country().id());
         assertEquals(RUSSIA.getName(), result.geo().country().name());
     }
 
@@ -57,7 +57,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
             new GeoLocationJson(
                 newCity,
                 new CountryJson(
-                    AUSTRALIA.getId(),
+                    AUSTRALIA_COUNTRY_ID,
                     AUSTRALIA.getName()
                 )
             )
@@ -71,7 +71,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH_NEW),
             result.photo());
         assertEquals(newCity, result.geo().city());
-        assertEquals(AUSTRALIA.getId(), result.geo().country().id());
+        assertEquals(AUSTRALIA_COUNTRY_ID, result.geo().country().id());
         assertEquals(AUSTRALIA.getName(), result.geo().country().name());
     }
 

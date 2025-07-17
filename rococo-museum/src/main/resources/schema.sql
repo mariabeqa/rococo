@@ -17,6 +17,9 @@ create table if not exists `museum`
     constraint fk_country_id foreign key (country_id) references `country` (id)
 );
 
+delete from `rococo-museum`.`museum`;
+delete from `rococo-museum`.`country`;
+
 insert into `country` (name) value ('Австралия');
 insert into `country` (name) value ('Австрия');
 insert into `country` (name) value ('Азербайджан');

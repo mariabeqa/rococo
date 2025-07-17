@@ -20,7 +20,7 @@ public class ProfileWebTest {
     private static final String PROFILE_MSG = "Профиль обновлен";
 
     @Test
-    @DisplayName("User should be able to update firstname and lastname in profile")
+    @DisplayName("WEB: User should be able to update firstname and lastname in profile")
     @ApiLogin(testUser = @TestUser())
     void shouldUpdateProfileWithFirstAndLastNames() {
         final String firstName = randomName();
@@ -45,7 +45,7 @@ public class ProfileWebTest {
 
     @Test
     @ScreenShotTest(expected = "expected-profilePic.png")
-    @DisplayName("User should be able to upload profile image")
+    @DisplayName("WEB: User should be able to upload profile image")
     @ApiLogin(testUser = @TestUser())
     void shouldUpdateProfileWithAnImage(BufferedImage expectedAvatar) throws IOException {
         String path = "img/profile/profilePic.jpg";

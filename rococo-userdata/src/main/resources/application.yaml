@@ -33,7 +33,7 @@ spring:
     open-in-view: false
   sql:
     init:
-      mode: never
+      mode: always
 
 logging:
   level:
@@ -59,6 +59,11 @@ spring:
   config:
     activate:
       on-profile: 'docker'
+  kafka:
+    bootstrap-servers: 'kafka:9092'
+    consumer:
+      group-id: 'userdata'
+      auto-offset-reset: earliest
   datasource:
     url: 'jdbc:mysql://rococo-db:3306/rococo-userdata?serverTimezone=UTC&createDatabaseIfNotExist=true'
 

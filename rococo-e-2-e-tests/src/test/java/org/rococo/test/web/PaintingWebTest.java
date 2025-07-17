@@ -27,7 +27,7 @@ public class PaintingWebTest {
     private static final String PAINTING_EDITED_MSG = "Обновлена картина: %s";
 
     @Test
-    @DisplayName("User should be able to add a new Painting")
+    @DisplayName("WEB: User should be able to add a new Painting")
     @TestMuseum(removeAfterTest = false)
     @TestArtist(removeAfterTest = false)
     @ApiLogin(testUser = @TestUser())
@@ -51,46 +51,7 @@ public class PaintingWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case painting name length is insufficient")
-    @ApiLogin(testUser = @TestUser())
-    @TestMuseum
-    @TestArtist
-    void shouldShowErrorIfPaintingNameLengthIsInvalid(MuseumJson museum, ArtistJson artist) {
-        final String invalidPaintingName = "ab";
-
-        Selenide.open(PaintingsPage.URL, PaintingsPage.class)
-                .addPainting()
-                .setName(invalidPaintingName)
-                .uploadPainting(PAINTING_PATH)
-                .selectAuthor(artist.name())
-                .setDescription(randomPaintingDescription())
-                .selectMuseum(museum.title())
-                .submitForm(new PaintingsPage())
-                .checkTextFieldErrorMessage(NAME_LENGTH_ERROR_MSG);
-    }
-
-    @Test
-    @DisplayName("Error message in case painting description length is insufficient")
-    @ApiLogin(testUser = @TestUser())
-    @TestMuseum
-    @TestArtist
-    void shouldShowErrorIfPaintingDescriptionLengthIsInvalid(MuseumJson museum, ArtistJson artist) {
-        final String paintingName = randomPaintingName();
-        final String invalidDescriptionText = "abw wer w";
-
-        Selenide.open(PaintingsPage.URL, PaintingsPage.class)
-                .addPainting()
-                .setName(paintingName)
-                .uploadPainting(PAINTING_PATH)
-                .selectAuthor(artist.name())
-                .setDescription(invalidDescriptionText)
-                .selectMuseum(museum.title())
-                .submitForm(new PaintingsPage())
-                .checkTextFieldErrorMessage(DESCRIPTION_LENGTH_ERROR_MSG);
-    }
-
-    @Test
-    @DisplayName("User should be able to edit Painting title and description")
+    @DisplayName("WEB: User should be able to edit Painting title and description")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     @TestArtist
@@ -123,7 +84,46 @@ public class PaintingWebTest {
     }
 
     @Test
-    @DisplayName("User should be able to edit Painting's Museum")
+    @DisplayName("WEB: Error message in case painting name length is insufficient")
+    @ApiLogin(testUser = @TestUser())
+    @TestMuseum
+    @TestArtist
+    void shouldShowErrorIfPaintingNameLengthIsInvalid(MuseumJson museum, ArtistJson artist) {
+        final String invalidPaintingName = "ab";
+
+        Selenide.open(PaintingsPage.URL, PaintingsPage.class)
+                .addPainting()
+                .setName(invalidPaintingName)
+                .uploadPainting(PAINTING_PATH)
+                .selectAuthor(artist.name())
+                .setDescription(randomPaintingDescription())
+                .selectMuseum(museum.title())
+                .submitForm(new PaintingsPage())
+                .checkTextFieldErrorMessage(NAME_LENGTH_ERROR_MSG);
+    }
+
+    @Test
+    @DisplayName("WEB: Error message in case painting description length is insufficient")
+    @ApiLogin(testUser = @TestUser())
+    @TestMuseum
+    @TestArtist
+    void shouldShowErrorIfPaintingDescriptionLengthIsInvalid(MuseumJson museum, ArtistJson artist) {
+        final String paintingName = randomPaintingName();
+        final String invalidDescriptionText = "abw wer w";
+
+        Selenide.open(PaintingsPage.URL, PaintingsPage.class)
+                .addPainting()
+                .setName(paintingName)
+                .uploadPainting(PAINTING_PATH)
+                .selectAuthor(artist.name())
+                .setDescription(invalidDescriptionText)
+                .selectMuseum(museum.title())
+                .submitForm(new PaintingsPage())
+                .checkTextFieldErrorMessage(DESCRIPTION_LENGTH_ERROR_MSG);
+    }
+
+    @Test
+    @DisplayName("WEB: User should be able to edit Painting's Museum")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     @TestArtist
@@ -154,13 +154,13 @@ public class PaintingWebTest {
 
     @Test
     @ScreenShotTest(expected = "expected-paintingPic.png")
-    @DisplayName("User should be able to edit painting picture")
+    @DisplayName("WEB: User should be able to edit painting picture")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     @TestArtist
-    @TestPainting(path = "img/painting/лес.png")
+    @TestPainting(path = "img/painting/forest.png")
     void shouldBeAbleToEditPaintingPicture(BufferedImage expectedAvatar, PaintingJson painting) throws IOException {
-        String path = "img/painting/полуночники.jpg";
+        String path = "img/painting/nighthawks.jpg";
 
         PaintingPage paintingPage = Selenide.open(PaintingsPage.URL, PaintingsPage.class)
                 .searchPainting(painting.title())

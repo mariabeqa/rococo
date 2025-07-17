@@ -3,6 +3,7 @@ package org.rococo.test.web;
 import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rococo.api.grpc.CountryGrpcClient;
 import org.rococo.jupiter.annotation.ApiLogin;
 import org.rococo.jupiter.annotation.ScreenShotTest;
 import org.rococo.jupiter.annotation.TestMuseum;
@@ -16,6 +17,7 @@ import org.rococo.page.museum.MuseumsPage;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.UUID;
 
 import static org.rococo.model.Countries.AUSTRALIA;
 import static org.rococo.utils.data.RandomDataUtils.randomMuseumTitle;
@@ -31,8 +33,11 @@ public class MuseumWebTest {
     private static final String MUSEUM_EDITED_MSG = "Обновлен музей: %s";
     private static final String MUSEUM_PHOTO_PATH = "img/museum/russian_museum.jpg";
 
+    protected final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
+    protected final UUID AUSTRALIA_COUNTRY_ID = countryGrpcClient.getCountryByName(AUSTRALIA.getName()).id();
+
     @Test
-    @DisplayName("User should be able to add a new Museum")
+    @DisplayName("WEB: User should be able to add a new Museum")
     @ApiLogin(testUser = @TestUser())
     void shouldBeAbleTAddNewMuseum() {
        final String name = randomMuseumTitle();
@@ -53,7 +58,7 @@ public class MuseumWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case museum name length is insufficient")
+    @DisplayName("WEB: Error message in case museum name length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfMuseumNameLengthIsInvalid() {
         final String invalidMuseumName = "ab";
@@ -70,7 +75,7 @@ public class MuseumWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case city name length is insufficient")
+    @DisplayName("WEB: Error message in case city name length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfCityNameLengthIsInvalid() {
         final String invalidCityName = "ab";
@@ -87,7 +92,7 @@ public class MuseumWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case museum description length is insufficient")
+    @DisplayName("WEB: Error message in case museum description length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfDescriptionLengthIsInvalid() {
         final String invalidDescriptionText = "abw wer w";
@@ -104,7 +109,7 @@ public class MuseumWebTest {
     }
 
     @Test
-    @DisplayName("User should be able to edit Museum title and description")
+    @DisplayName("WEB: User should be able to edit Museum title and description")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     void shouldBeAbleToEditMuseumTitleAndDesc(MuseumJson museum) {
@@ -133,7 +138,7 @@ public class MuseumWebTest {
     }
 
     @Test
-    @DisplayName("User should be able to edit Museum geo location")
+    @DisplayName("WEB: User should be able to edit Museum geo location")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     void shouldBeAbleToEditMuseumGeoLocation(MuseumJson museum) {
@@ -159,7 +164,7 @@ public class MuseumWebTest {
                         new GeoLocationJson(
                                 newCity,
                                 new CountryJson(
-                                        AUSTRALIA.getId(),
+                                        AUSTRALIA_COUNTRY_ID,
                                         newCountry
                                 )
                         )
@@ -169,7 +174,7 @@ public class MuseumWebTest {
 
     @Test
     @ScreenShotTest(expected = "expected-museumPic.png")
-    @DisplayName("User should be able to edit museum picture")
+    @DisplayName("WEB: User should be able to edit museum picture")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
     void shouldBeAbleToEditMuseumPicture(BufferedImage expectedAvatar, MuseumJson museum) throws IOException {

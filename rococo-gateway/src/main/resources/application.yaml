@@ -50,7 +50,7 @@ grpc:
       .max-inbound-message-size: 9155241000
 
 rococo-ui:
-  uri: http://127.0.0.1:3000
+  uri: 'http://127.0.0.1:3000'
 
 ---
 spring:
@@ -61,7 +61,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: 'http://auth.niffler.dc:9000'
+          issuer-uri: 'http://auth.rococo.dc:9000'
 
 grpc:
   client:
@@ -71,7 +71,7 @@ grpc:
       .max-inbound-message-size: 9155241000
 
     grpcCountriesClient:
-      address: 'static://countries.rococo.dc:8806'
+      address: 'static://museum.rococo.dc:8806'
       negotiationType: PLAINTEXT
       .max-inbound-message-size: 9155241000
 
@@ -88,9 +88,8 @@ grpc:
     grpcPaintingClient:
       address: 'static://painting.rococo.dc:8810'
       negotiationType: PLAINTEXT
-      .max-inbound-message-size:
-        9155241000
+      .max-inbound-message-size: 9155241000
 
 rococo-ui:
-  uri: http://client.rococo.dc
+  uri: 'http://client.rococo.dc'
 ---

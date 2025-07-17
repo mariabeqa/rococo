@@ -6,3 +6,5 @@ create table if not exists `artist`
     photo     longblob,
     primary key (id)
     );
+
+delete from `rococo-artist`.`artist`;

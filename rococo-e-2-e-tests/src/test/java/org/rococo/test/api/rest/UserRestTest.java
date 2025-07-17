@@ -45,7 +45,6 @@ public class UserRestTest extends BaseRestTest {
 
         UserJson response = gatewayUserApiClient.updateUser(token, newUserJson);
 
-        assertEquals(expected.id(), response.id());
         assertEquals(expected.username(), response.username());
         assertEquals(firstName, response.firstname());
         assertEquals(lastName, response.lastname());

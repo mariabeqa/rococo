@@ -1,12 +1,18 @@
 package org.rococo.test.api.rest;
 
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.rococo.api.grpc.CountryGrpcClient;
 import org.rococo.api.rest.impl.*;
 import org.rococo.data.repository.ArtistRepositoryHibernate;
 import org.rococo.data.repository.MuseumRepositoryHibernate;
 import org.rococo.data.repository.PaintingRepositoryHibernate;
 import org.rococo.jupiter.annotation.meta.RestTest;
 import org.rococo.jupiter.extension.ApiLoginExtension;
+
+import java.util.UUID;
+
+import static org.rococo.model.Countries.AUSTRALIA;
+import static org.rococo.model.Countries.RUSSIA;
 
 @RestTest
 public class BaseRestTest {

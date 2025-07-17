@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
 @EnableWebSecurity
+@EnableMethodSecurity
 @Configuration
 @Profile({"local", "docker"})
 public class SecurityConfig {
@@ -33,10 +35,12 @@ public class SecurityConfig {
     http.csrf(AbstractHttpConfigurer::disable)
         .authorizeHttpRequests(customizer ->
             customizer.requestMatchers(
-                    antMatcher(HttpMethod.GET, "/api/session"),
-                    antMatcher(HttpMethod.GET, "/api/artist/**"),
-                    antMatcher(HttpMethod.GET, "/api/museum/**"),
-                    antMatcher(HttpMethod.GET, "/api/painting/**"))
+                            antMatcher("/api/session"),
+                            antMatcher("/api/country/**"),
+                            antMatcher("/api/artist/**"),
+                            antMatcher( "/api/museum/**"),
+                            antMatcher( "/api/painting/**"),
+                            antMatcher("/api/user"))
                 .permitAll()
                 .anyRequest()
                 .authenticated()

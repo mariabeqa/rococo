@@ -2,6 +2,7 @@ package org.rococo.test.api.rest;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rococo.api.grpc.CountryGrpcClient;
 import org.rococo.jupiter.annotation.ApiLogin;
 import org.rococo.jupiter.annotation.TestMuseum;
 import org.rococo.jupiter.annotation.TestUser;
@@ -24,6 +25,10 @@ import static org.rococo.utils.data.RandomDataUtils.randomMuseumTitle;
 
 public class MuseumRestTest extends BaseRestTest {
 
+    private final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
+    private final UUID RUSSIA_COUNTRY_ID = countryGrpcClient.getCountryByName(RUSSIA.getName()).id();
+    private final UUID AUSTRALIA_COUNTRY_ID = countryGrpcClient.getCountryByName(AUSTRALIA.getName()).id();
+
     @ApiLogin
     @TestUser
     @Test
@@ -39,7 +44,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -54,7 +59,7 @@ public class MuseumRestTest extends BaseRestTest {
         assertEquals(MUSEUM_DESCRIPTION, museum.description());
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH), museum.photo());
         assertEquals(CITY, museum.geo().city());
-        assertEquals(RUSSIA.getId(), museum.geo().country().id());
+        assertEquals(RUSSIA_COUNTRY_ID, museum.geo().country().id());
         assertEquals(RUSSIA.getName(), museum.geo().country().name());
     }
 
@@ -73,7 +78,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -104,7 +109,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -134,7 +139,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -167,7 +172,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 newCity,
                 new CountryJson(
-                    AUSTRALIA.getId(),
+                    AUSTRALIA_COUNTRY_ID,
                     AUSTRALIA.getName()
                 )
             )
@@ -182,7 +187,7 @@ public class MuseumRestTest extends BaseRestTest {
         assertEquals(newMuseumDescription, museum.description());
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH_NEW), museum.photo());
         assertEquals(newCity, museum.geo().city());
-        assertEquals(AUSTRALIA.getId(), museum.geo().country().id());
+        assertEquals(AUSTRALIA_COUNTRY_ID, museum.geo().country().id());
         assertEquals(AUSTRALIA.getName(), museum.geo().country().name());
     }
 
@@ -201,7 +206,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )
@@ -268,7 +273,7 @@ public class MuseumRestTest extends BaseRestTest {
             new GeoLocationJson(
                 CITY,
                 new CountryJson(
-                    RUSSIA.getId(),
+                    RUSSIA_COUNTRY_ID,
                     RUSSIA.getName()
                 )
             )

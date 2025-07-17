@@ -1,12 +1,10 @@
 package org.rococo.service;
 
 import io.grpc.Status;
-import org.rococo.data.CountryEntity;
-import org.rococo.data.repository.CountryRepository;
-import org.rococo.exception.NotFoundException;
-
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import org.rococo.data.CountryEntity;
+import org.rococo.data.repository.CountryRepository;
 import org.rococo.grpc.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,33 +59,63 @@ public class CountryGrpcService extends RococoCountriesServiceGrpc.RococoCountri
 
     @Override
     public void findCountryById(CountryByIdRequest request, StreamObserver<CountryResponse> responseObserver) {
-        Optional<CountryEntity> byId = countryRepository.findById(UUID.fromString(request.getId()));
+        try {
+            Optional<CountryEntity> byId = countryRepository.findById(UUID.fromString(request.getId()));
 
-        if (byId.isPresent()) {
+            if (byId.isEmpty()) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription(String.format("Country with id '%s' not found", request.getId()))
+                                .asRuntimeException()
+                );
+                return;
+            }
+
             responseObserver.onNext(
                     CountryResponse.newBuilder()
                             .setCountry(toGrpc(byId.get()))
                             .build()
             );
             responseObserver.onCompleted();
-        } else {
-            throw new NotFoundException("Country with id " + request.getId() + " not found");
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
         }
     }
 
     @Override
     public void findCountryByName(CountryByNameRequest request, StreamObserver<CountryResponse> responseObserver) {
-        Optional<CountryEntity> byName = countryRepository.findByName(request.getName());
+        try {
+            Optional<CountryEntity> byName = countryRepository.findByName(request.getName());
 
-        if (byName.isPresent()) {
+            if (byName.isEmpty()) {
+                responseObserver.onError(
+                        Status.NOT_FOUND
+                                .withDescription(String.format("Country with name '%s' not found", request.getName()))
+                                .asRuntimeException()
+                );
+                return;
+            }
+
             responseObserver.onNext(
                     CountryResponse.newBuilder()
-                            .setCountry(toGrpc(byName.get()))
+                            .setCountry(CountryEntity.toGrpc(byName.get()))
                             .build()
             );
             responseObserver.onCompleted();
-        } else {
-            throw new NotFoundException("Country with id " + request.getName() + " not found");
+
+        } catch (Exception e) {
+            responseObserver.onError(
+                    Status.INTERNAL
+                            .withDescription("Internal server error")
+                            .withCause(e)
+                            .asRuntimeException()
+            );
         }
     }
 

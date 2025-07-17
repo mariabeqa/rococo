@@ -33,7 +33,7 @@ spring:
     open-in-view: false
   sql:
     init:
-      mode: never
+      mode: always
 
 logging:
   level:
@@ -67,5 +67,19 @@ spring:
       on-profile: 'docker'
   datasource:
     url: 'jdbc:mysql://rococo-db:3306/rococo-painting?serverTimezone=UTC&createDatabaseIfNotExist=true'
+
+grpc:
+  client:
+    grpcMuseumClient:
+      address: 'static://museum.rococo.dc:8806'
+      negotiationType: PLAINTEXT
+
+    grpcCountriesClient:
+      address: 'static://museum.rococo.dc:8806'
+      negotiationType: PLAINTEXT
+
+    grpcArtistClient:
+      address: 'static://artist.rococo.dc:8808'
+      negotiationType: PLAINTEXT
 
 ---

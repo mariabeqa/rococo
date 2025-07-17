@@ -8,13 +8,13 @@ enum DockerConfig implements Config {
   @Nonnull
   @Override
   public String frontUrl() {
-    return "http://frontend.niffler.dc/";
+    return "http://client.rococo.dc/";
   }
 
   @Nonnull
   @Override
   public String authUrl() {
-    return "http://auth.niffler.dc:9000/";
+    return "http://auth.rococo.dc:9000/";
   }
 
   @Nonnull

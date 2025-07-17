@@ -9,14 +9,15 @@ spring:
   application:
     name: rococo-auth
   datasource:
-    username: root
-    password: secret
     hikari:
       connection-timeout: 20000
       minimum-idle: 10
       maximum-pool-size: 30
       idle-timeout: 10000
       max-lifetime: 1000
+  sql:
+    init:
+      mode: always
   jpa:
     hibernate:
       ddl-auto: validate
@@ -48,6 +49,8 @@ spring:
 
   datasource:
     url: 'jdbc:mysql://127.0.0.1:3306/rococo-auth?serverTimezone=UTC&createDatabaseIfNotExist=true'
+    username: root
+    password: secret
 
 rococo-front:
   base-uri: 'http://127.0.0.1:3000'
@@ -64,6 +67,8 @@ spring:
     bootstrap-servers: 'kafka:9092'
   datasource:
     url: 'jdbc:mysql://rococo-db:3306/rococo-auth?serverTimezone=UTC&createDatabaseIfNotExist=true'
+    username: root
+    password: secret
 rococo-front:
   base-uri: 'http://client.rococo.dc'
 rococo-auth:

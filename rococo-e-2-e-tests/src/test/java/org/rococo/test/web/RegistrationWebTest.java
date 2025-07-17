@@ -20,7 +20,7 @@ public class RegistrationWebTest {
     private static final String PW_SHOULD_BE_EQUAL_ERROR_MSG = "Passwords should be equal";
 
     @Test
-    @DisplayName("Successful registration")
+    @DisplayName("WEB: Successful registration")
     void shouldRegisterNewUser() {
         final String username = randomUsername();
         final String pw = randomPassword();
@@ -37,7 +37,7 @@ public class RegistrationWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful registration with existing username")
+    @DisplayName("WEB: Unsuccessful registration with existing username")
     @TestUser
     void shouldNotRegisterUserWithExistingUsername(UserJson user) {
         final String existingUsername = user.username();
@@ -52,7 +52,7 @@ public class RegistrationWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful registration in case confirm password doesn't match")
+    @DisplayName("WEB: Unsuccessful registration in case confirm password doesn't match")
     void shouldShowErrorIfPasswordAndConfirmPasswordAreNotEqual() {
         final String newUsername = randomUsername();
         final String password = randomPassword();
@@ -67,7 +67,7 @@ public class RegistrationWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful registration in case password length is incorrect")
+    @DisplayName("WEB: Unsuccessful registration in case password length is incorrect")
     void shouldShowErrorIfPasswordLengthIsInvalid() {
         final String newUsername = randomUsername();
         final String password = "12";
@@ -82,7 +82,7 @@ public class RegistrationWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful registration in case username length is incorrect")
+    @DisplayName("WEB: Unsuccessful registration in case username length is incorrect")
     void shouldShowErrorIfUsernameLengthIsInvalid() {
         final String newUsername = "ab";
         final String password = randomPassword();

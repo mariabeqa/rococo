@@ -52,8 +52,6 @@ public class AuthServiceConfig {
   private final String rococoAuthUri;
   private final String clientId;
   private final CorsCustomizer corsCustomizer;
-  private final String serverPort;
-  private final String defaultHttpsPort = "443";
   private final Environment environment;
 
   @Autowired
@@ -61,14 +59,12 @@ public class AuthServiceConfig {
                            @Value("${rococo-front.base-uri}") String rococoFrontUri,
                            @Value("${rococo-auth.base-uri}") String rococoAuthUri,
                            @Value("${oauth2.client-id}") String clientId,
-                           @Value("${server.port}") String serverPort,
                            CorsCustomizer corsCustomizer,
                            Environment environment) {
     this.keyManager = keyManager;
     this.rococoFrontUri = rococoFrontUri;
     this.rococoAuthUri = rococoAuthUri;
     this.clientId = clientId;
-    this.serverPort = serverPort;
     this.corsCustomizer = corsCustomizer;
     this.environment = environment;
   }
@@ -78,7 +74,7 @@ public class AuthServiceConfig {
   public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http,
                                                                     LoginUrlAuthenticationEntryPoint entryPoint) throws Exception {
     OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-    if (environment.acceptsProfiles(Profiles.of("local", "staging"))) {
+    if (environment.acceptsProfiles(Profiles.of("local"))) {
       http.addFilterBefore(new SpecificRequestDumperFilter(
           new RequestDumperFilter(),
           "/login", "/oauth2/.*"
@@ -93,24 +89,6 @@ public class AuthServiceConfig {
 
     corsCustomizer.corsCustomizer(http);
     return http.build();
-  }
-
-  @Bean
-  @Profile({"staging", "prod"})
-  public LoginUrlAuthenticationEntryPoint loginUrlAuthenticationEntryPointHttps() {
-    LoginUrlAuthenticationEntryPoint entryPoint = new LoginUrlAuthenticationEntryPoint("/login");
-    PortMapperImpl portMapper = new PortMapperImpl();
-    portMapper.setPortMappings(Map.of(
-        serverPort, defaultHttpsPort,
-        "80", defaultHttpsPort,
-        "8080", "8443"
-    ));
-    PortResolverImpl portResolver = new PortResolverImpl();
-    portResolver.setPortMapper(portMapper);
-    entryPoint.setForceHttps(true);
-    entryPoint.setPortMapper(portMapper);
-    entryPoint.setPortResolver(portResolver);
-    return entryPoint;
   }
 
   @Bean

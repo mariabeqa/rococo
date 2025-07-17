@@ -36,7 +36,7 @@ public class SecurityConfig {
   public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
     corsCustomizer.corsCustomizer(http);
 
-    if (environment.acceptsProfiles(Profiles.of("local", "staging"))) {
+    if (environment.acceptsProfiles(Profiles.of("local"))) {
       http.addFilterBefore(new SpecificRequestDumperFilter(
           new RequestDumperFilter(),
           "/login", "/oauth2/.*"

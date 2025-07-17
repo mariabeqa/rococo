@@ -36,6 +36,10 @@ public interface Config {
     return 8806;
   }
 
+  default int countryGrpcPort() {
+    return 8806;
+  }
+
   @Nonnull
   String artistGrpcAddress();
 

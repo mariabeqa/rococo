@@ -3,6 +3,7 @@ package org.rococo.jupiter.extension;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
+import org.rococo.api.grpc.CountryGrpcClient;
 import org.rococo.api.grpc.MuseumGrpcClient;
 import org.rococo.jupiter.annotation.TestMuseum;
 import org.rococo.jupiter.annotation.TestPainting;
@@ -28,6 +29,7 @@ public class MuseumExtension implements BeforeEachCallback, AfterEachCallback, P
     private static final String MUSEUM_PHOTO_PATH = "img/museum/russian_museum.jpg";
     private static final String MUSEUM_CITY = "Санкт-Петербург";
     private final MuseumGrpcClient museumGrpcClient = new MuseumGrpcClient();
+    private final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
 
     @Override
     @Step("Create test museum")
@@ -45,7 +47,8 @@ public class MuseumExtension implements BeforeEachCallback, AfterEachCallback, P
                     final String countryName = RUSSIA.equals(museumAnno.country()) ?
                             RUSSIA.getName() : museumAnno.country().getName();
                     final UUID countryId = RUSSIA.equals(museumAnno.country()) ?
-                            RUSSIA.getId() : museumAnno.country().getId();
+                            countryGrpcClient.getCountryByName(RUSSIA.getName()).id()
+                            : countryGrpcClient.getCountryByName(museumAnno.country().getName()).id();
 
                     MuseumJson museum = new MuseumJson(
                             null,

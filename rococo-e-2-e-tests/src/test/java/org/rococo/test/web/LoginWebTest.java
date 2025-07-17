@@ -13,7 +13,7 @@ import org.rococo.page.MainPage;
 public class LoginWebTest {
 
     @Test
-    @DisplayName("Successful login")
+    @DisplayName("WEB: Successful login")
     @TestUser
     void mainPageShouldBeDisplayedAfterSuccessLogin(UserJson user) {
         Selenide.open(MainPage.URL, MainPage.class)
@@ -24,7 +24,7 @@ public class LoginWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful login with invalid password")
+    @DisplayName("WEB: Unsuccessful login with invalid password")
     @TestUser
     void userShouldStayOnLoginPageAfterLoginWithInvalidPw(UserJson user) {
         final String incorrectPw = "123";
@@ -36,7 +36,7 @@ public class LoginWebTest {
     }
 
     @Test
-    @DisplayName("Unsuccessful login with invalid username")
+    @DisplayName("WEB: Unsuccessful login with invalid username")
     @TestUser
     void userShouldStayOnLoginPageAfterLoginWithInvalidUsername(UserJson user) {
         final String incorrectPw = "123";
@@ -48,7 +48,7 @@ public class LoginWebTest {
     }
 
     @Test
-    @DisplayName("Successful logout")
+    @DisplayName("WEB: Successful logout")
     @TestUser
     void mainPageShouldBeDisplayedAfterSuccessfulLogout(UserJson user) {
         Selenide.open(MainPage.URL, MainPage.class)
@@ -63,7 +63,7 @@ public class LoginWebTest {
     }
 
     @Test
-    @DisplayName("Successful logout")
+    @DisplayName("WEB: Successful logout")
     @TestUser
     void mainPageShouldBeDisplayToastMessage(UserJson user) {
         Selenide.open(MainPage.URL, MainPage.class)

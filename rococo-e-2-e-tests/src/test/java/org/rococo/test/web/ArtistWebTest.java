@@ -28,7 +28,7 @@ public class ArtistWebTest {
     private static final String ARTIST_BIO = "Русский музей – крупнейший в мире музей русского искусства, уникальный архитектурно-художественный комплекс в историческом центре Санкт-Петербурга.";
 
     @Test
-    @DisplayName("User should be able to add a new Artist")
+    @DisplayName("WEB: User should be able to add a new Artist")
     @ApiLogin(testUser = @TestUser())
     void shouldBeAbleToAddNewArtist() {
         final String name = randomArtistName();
@@ -44,7 +44,7 @@ public class ArtistWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case artist name length is insufficient")
+    @DisplayName("WEB: Error message in case artist name length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfArtistNameLengthIsInvalid() {
         final String invalidArtistName = "ab";
@@ -59,7 +59,7 @@ public class ArtistWebTest {
     }
 
     @Test
-    @DisplayName("Error message in case artist bio length is insufficient")
+    @DisplayName("WEB: Error message in case artist bio length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfArtistBioLengthIsInvalid() {
         final String invalidArtistBio = "abf kjf j";
@@ -74,7 +74,7 @@ public class ArtistWebTest {
     }
 
     @Test
-    @DisplayName("User should be able to edit Artist name and bio")
+    @DisplayName("WEB: User should be able to edit Artist name and bio")
     @ApiLogin(testUser = @TestUser())
     @TestArtist
     void shouldBeAbleToEditArtistNameAndBio(ArtistJson artist) {
@@ -103,7 +103,7 @@ public class ArtistWebTest {
 
     @Test
     @ScreenShotTest(expected = "expected-artistPic.png")
-    @DisplayName("User should be able to edit artist photo")
+    @DisplayName("WEB: User should be able to edit artist photo")
     @ApiLogin(testUser = @TestUser())
     @TestArtist
     void shouldBeAbleToEditArtistPhoto(BufferedImage expectedAvatar, ArtistJson artist) throws IOException {
@@ -123,7 +123,7 @@ public class ArtistWebTest {
     }
 
     @Test
-    @DisplayName("User should be able to add a new painting on Artist page")
+    @DisplayName("WEB: User should be able to add a new painting on Artist page")
     @ApiLogin(testUser = @TestUser())
     @TestArtist(removeAfterTest = false)
     @TestMuseum(removeAfterTest = false)

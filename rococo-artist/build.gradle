@@ -20,6 +20,33 @@ dependencies {
     testImplementation 'io.grpc:grpc-testing:1.64.0'
 }
 
+jib {
+    container {
+        ports = ['8807', '8808']
+        jvmFlags = ["-Dspring.profiles.active=${System.getenv("PROFILE")}"]
+        creationTime = 'USE_CURRENT_TIMESTAMP'
+        labels = [
+                'version'   : "${project.version}".toString()
+        ]
+    }
+    from {
+        image = "${project.ext.dockerImage}"
+        platforms {
+            platform {
+                architecture = "${project.ext.dockerArch}"
+                os = 'linux'
+            }
+        }
+    }
+    to {
+        image = "${project.ext.dockerHubName}/${project.name}-${System.getenv("PROFILE")}"
+        tags = ['latest', "${project.version}"]
+    }
+}
+
+tasks.jib.dependsOn test
+tasks.jibDockerBuild.dependsOn test
+
 tasks.named('test') {
     useJUnitPlatform()
 }

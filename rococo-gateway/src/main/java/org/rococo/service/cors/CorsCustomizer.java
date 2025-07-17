@@ -13,11 +13,11 @@ import java.util.List;
 @Component
 public class CorsCustomizer {
 
-    private final String nifflerFrontUri;
+    private final String rococoFrontUri;
 
     @Autowired
-    public CorsCustomizer(@Value("${rococo-ui.uri}") String nifflerFrontUri) {
-        this.nifflerFrontUri = nifflerFrontUri;
+    public CorsCustomizer(@Value("${rococo-ui.uri}") String rococoFrontUri) {
+        this.rococoFrontUri = rococoFrontUri;
     }
 
     public void corsCustomizer(@Nonnull HttpSecurity http) throws Exception {
@@ -25,7 +25,7 @@ public class CorsCustomizer {
             CorsConfigurationSource source = s -> {
                 CorsConfiguration cc = new CorsConfiguration();
                 cc.setAllowCredentials(true);
-                cc.setAllowedOrigins(List.of(nifflerFrontUri));
+                cc.setAllowedOrigins(List.of(rococoFrontUri));
                 cc.setAllowedHeaders(List.of("*"));
                 cc.setAllowedMethods(List.of("*"));
                 return cc;
