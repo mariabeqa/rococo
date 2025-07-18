@@ -14,6 +14,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.rococo.constant.DefaultData.*;
 import static org.rococo.utils.ImageUtil.getEncodedImageFromClasspath;
 import static org.rococo.utils.data.RandomDataUtils.randomArtistName;
 

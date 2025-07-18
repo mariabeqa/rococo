@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.rococo.constant.DefaultData.*;
 import static org.rococo.model.Countries.AUSTRALIA;
 import static org.rococo.model.Countries.RUSSIA;
 import static org.rococo.utils.ImageUtil.getEncodedImageFromClasspath;

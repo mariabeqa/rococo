@@ -13,6 +13,8 @@ import org.rococo.page.artist.ArtistsPage;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import static org.rococo.constant.DefaultData.ARTIST_BIO;
+import static org.rococo.constant.DefaultData.ARTIST_IMAGE_PATH;
 import static org.rococo.utils.data.RandomDataUtils.*;
 
 @WebTest
@@ -23,9 +25,7 @@ public class ArtistWebTest {
     private static final String ARTIST_NAME_LENGTH_ERROR_MSG = "Имя не может быть короче 3 символов";
     private static final String ARTIST_BIO_LENGTH_ERROR_MSG = "Биография не может быть короче 10 символов";
     private static final String ARTIST_EDITED_MSG = "Обновлен художник: %s";
-    private static final String ARTIST_PHOTO_PATH = "img/artist/kuindzhi.jpg";
     private static final String ARTIST_PAINTING_PATH = "img/painting/raduga.jpg";
-    private static final String ARTIST_BIO = "Русский музей – крупнейший в мире музей русского искусства, уникальный архитектурно-художественный комплекс в историческом центре Санкт-Петербурга.";
 
     @Test
     @DisplayName("WEB: User should be able to add a new Artist")
@@ -36,7 +36,7 @@ public class ArtistWebTest {
         Selenide.open(ArtistsPage.URL, ArtistsPage.class)
                 .addArtist()
                 .setName(name)
-                .uploadPhoto(ARTIST_PHOTO_PATH)
+                .uploadPhoto(ARTIST_IMAGE_PATH)
                 .setBiography(ARTIST_BIO)
                 .submitForm()
                 .checkToastMessage(String.format(ARTIST_ADDED_MSG, name))
@@ -52,7 +52,7 @@ public class ArtistWebTest {
         Selenide.open(ArtistsPage.URL, ArtistsPage.class)
                 .addArtist()
                 .setName(invalidArtistName)
-                .uploadPhoto(ARTIST_PHOTO_PATH)
+                .uploadPhoto(ARTIST_IMAGE_PATH)
                 .setBiography(ARTIST_BIO)
                 .submitForm()
                 .checkTextFieldErrorMessage(ARTIST_NAME_LENGTH_ERROR_MSG);
@@ -67,7 +67,7 @@ public class ArtistWebTest {
         Selenide.open(ArtistsPage.URL, ArtistsPage.class)
                 .addArtist()
                 .setName(randomArtistName())
-                .uploadPhoto(ARTIST_PHOTO_PATH)
+                .uploadPhoto(ARTIST_IMAGE_PATH)
                 .setBiography(invalidArtistBio)
                 .submitForm()
                 .checkTextFieldErrorMessage(ARTIST_BIO_LENGTH_ERROR_MSG);
