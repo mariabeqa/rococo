@@ -1,6 +1,3 @@
-server:
-  port: 8807
-
 grpc:
   server:
     port: 8808
@@ -38,7 +35,10 @@ spring:
 logging:
   level:
     root: INFO
-    org.springframework.web: DEBUG
+    org.springframework.web: INFO
+    org.springframework.kafka: INFO
+    org.springframework.boot.autoconfigure: INFO
+    net.devh.boot.grpc: INFO
 
 ---
 spring:

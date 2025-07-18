@@ -38,7 +38,7 @@ public abstract class RestClient {
   }
 
   public RestClient(String baseUrl) {
-    this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.BODY);
+    this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.BASIC);
   }
 
   public RestClient(String baseUrl, boolean followRedirect) {

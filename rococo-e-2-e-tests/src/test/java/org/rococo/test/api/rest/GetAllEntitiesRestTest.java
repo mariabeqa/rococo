@@ -7,6 +7,9 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.rococo.data.entity.ArtistEntity;
 import org.rococo.data.entity.MuseumEntity;
 import org.rococo.data.entity.PaintingEntity;
+import org.rococo.data.repository.ArtistRepositoryHibernate;
+import org.rococo.data.repository.MuseumRepositoryHibernate;
+import org.rococo.data.repository.PaintingRepositoryHibernate;
 import org.rococo.jupiter.annotation.*;
 import org.rococo.model.ArtistJson;
 import org.rococo.model.MuseumJson;
@@ -20,6 +23,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Isolated
 public class GetAllEntitiesRestTest extends BaseRestTest {
+
+    private final ArtistRepositoryHibernate artistRepository = new ArtistRepositoryHibernate();
+    private final MuseumRepositoryHibernate museumRepository = new MuseumRepositoryHibernate();
+    private final PaintingRepositoryHibernate paintingRepository = new PaintingRepositoryHibernate();
 
     @Test
     @ApiLogin

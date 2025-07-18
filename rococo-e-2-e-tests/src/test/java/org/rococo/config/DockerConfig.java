@@ -62,9 +62,9 @@ enum DockerConfig implements Config {
   @Nonnull
   @Override
   public String allureDockerUrl() {
-    final String allureDockerApi = System.getenv("ALLURE_DOCKER_API");
-    return allureDockerApi == null
+    final String url = System.getenv("ALLURE_DOCKER_API");
+    return url == null
             ? "http://allure:5050/"
-            : allureDockerApi;
+            : url;
   }
 }
