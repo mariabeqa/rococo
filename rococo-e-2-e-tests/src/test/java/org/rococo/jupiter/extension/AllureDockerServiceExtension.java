@@ -20,7 +20,7 @@ public class AllureDockerServiceExtension implements SuiteExtension {
     private static final Config CFG = Config.getInstance();
     private static final boolean IN_DOCKER = "docker".equals(System.getProperty("test.env"));
     private static final Base64.Encoder ENCODER = Base64.getEncoder();
-    private static final Path PATH_TO_RESULTS    = Path.of("./rococo-e-2-e-tests/build/allure-results");
+    private static final Path PATH_TO_RESULTS = Path.of("./rococo-e-2-e-tests/build/allure-results");
     private static final AllureDockerApiClient allureApiClient = new AllureDockerApiClient();
 
     @Override

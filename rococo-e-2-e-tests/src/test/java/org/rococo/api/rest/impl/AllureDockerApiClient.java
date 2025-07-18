@@ -48,7 +48,7 @@ public class AllureDockerApiClient extends RestClient {
                     projectId,
                     System.getenv("HEAD_COMMIT_MESSAGE"),
                     System.getenv("BUILD_URL"),
-                    System.getenv("EXECUTION_TYPE ")
+                    System.getenv("EXECUTION_TYPE")
             ).execute();
         } catch (IOException e) {
             throw new AssertionError(e);
