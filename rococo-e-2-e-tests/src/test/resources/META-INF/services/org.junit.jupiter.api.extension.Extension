@@ -1,3 +1,4 @@
 org.rococo.jupiter.extension.CookiesExtension
 org.rococo.jupiter.extension.JpaExtension
 org.rococo.jupiter.extension.TestMethodContextExtension
+org.rococo.jupiter.extension.AllureDockerServiceExtension

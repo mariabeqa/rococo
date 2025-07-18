@@ -11,6 +11,11 @@ public interface Config {
   }
 
   @Nonnull
+  default String projectId() {
+    return "mariamur-rococo";
+  }
+
+  @Nonnull
   String frontUrl();
 
   @Nonnull
@@ -56,4 +61,8 @@ public interface Config {
 
   @Nonnull
   String screenshotBaseDir();
+
+  @Nonnull
+  String allureDockerUrl();
+
 }

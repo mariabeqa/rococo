@@ -32,6 +32,11 @@ public abstract class RestClient {
   private final OkHttpClient okHttpClient;
   private final Retrofit retrofit;
 
+  public RestClient(String baseUrl,
+                    HttpLoggingInterceptor.Level httpLogLevel) {
+    this(baseUrl, false, JacksonConverterFactory.create(), httpLogLevel);
+  }
+
   public RestClient(String baseUrl) {
     this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.BODY);
   }

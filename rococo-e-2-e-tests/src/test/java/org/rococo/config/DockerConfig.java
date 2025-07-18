@@ -58,4 +58,13 @@ enum DockerConfig implements Config {
   public String screenshotBaseDir() {
     return "screenshots/selenoid/";
   }
+
+  @Nonnull
+  @Override
+  public String allureDockerUrl() {
+    final String allureDockerApi = System.getenv("ALLURE_DOCKER_API");
+    return allureDockerApi == null
+            ? "http://allure:5050/"
+            : allureDockerApi;
+  }
 }

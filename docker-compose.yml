@@ -193,7 +193,6 @@ services:
       - HEAD_COMMIT_MESSAGE=${HEAD_COMMIT_MESSAGE}
       - EXECUTION_TYPE=${EXECUTION_TYPE}
     volumes:
-      - allure-results:/rococo/rococo-e-2-e-tests/build/allure-results
       - ./rococo-e-2-e-tests/.screen-output/screenshots/selenoid:/rococo/rococo-e-2-e-tests/.screen-output/screenshots/selenoid
     depends_on:
       client.rococo.dc:
@@ -208,12 +207,10 @@ services:
     depends_on:
       - rococo-e-2-e
     environment:
-      - CHECK_RESULTS_EVERY_SECONDS=5
+      - CHECK_RESULTS_EVERY_SECONDS=NONE
       - KEEP_HISTORY=1
     ports:
       - 5050:5050
-    volumes:
-      - allure-results:/app/allure-results
     networks:
       - rococo-network
 
