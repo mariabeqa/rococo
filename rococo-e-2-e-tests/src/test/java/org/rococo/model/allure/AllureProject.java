@@ -1,4 +1,6 @@
 package org.rococo.model.allure;
 
-public record AllureProject(String id) {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public record AllureProject(@JsonProperty("id") String id) {
 }

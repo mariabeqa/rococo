@@ -22,7 +22,7 @@ dependencies {
 
 jib {
     container {
-        ports = ['8807', '8808']
+        ports = ['8808']
         jvmFlags = ["-Dspring.profiles.active=${System.getenv("PROFILE")}"]
         creationTime = 'USE_CURRENT_TIMESTAMP'
         labels = [

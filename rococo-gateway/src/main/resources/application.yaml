@@ -9,10 +9,8 @@ logging:
   level:
     root: INFO
     org.springframework.web: INFO
-    org.springframework.security: INFO
-    org.springframework.security.oauth2: INFO
-    net.devh.boot.grpc: INFO
     org.springframework.boot.autoconfigure: INFO
+    net.devh.boot.grpc: INFO
 ---
 spring:
   config:

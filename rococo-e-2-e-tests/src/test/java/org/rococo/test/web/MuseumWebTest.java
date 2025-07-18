@@ -19,19 +19,19 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.UUID;
 
+import static org.rococo.constant.DefaultData.MUSEUM_DESCRIPTION;
+import static org.rococo.constant.DefaultData.MUSEUM_IMAGE_PATH;
 import static org.rococo.model.Countries.AUSTRALIA;
 import static org.rococo.utils.data.RandomDataUtils.randomMuseumTitle;
 
 @WebTest
 public class MuseumWebTest {
 
-    private static final String MUSEUM_DESCRIPTION = "Русский музей – крупнейший в мире музей русского искусства, уникальный архитектурно-художественный комплекс в историческом центре Санкт-Петербурга.";
     private static final String MUSEUM_ADDED_MSG = "Добавлен музей: %s";
     private static final String MUSEUM_NAME_LENGTH_ERROR_MSG = "Название не может быть короче 3 символов";
     private static final String CITY_NAME_LENGTH_ERROR_MSG = "Город не может быть короче 3 символов";
     private static final String DESCRIPTION_LENGTH_ERROR_MSG = "Описание не может быть короче 10 символов";
     private static final String MUSEUM_EDITED_MSG = "Обновлен музей: %s";
-    private static final String MUSEUM_PHOTO_PATH = "img/museum/russian_museum.jpg";
 
     protected final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
     protected final UUID AUSTRALIA_COUNTRY_ID = countryGrpcClient.getCountryByName(AUSTRALIA.getName()).id();
@@ -47,7 +47,7 @@ public class MuseumWebTest {
                 .setName(name)
                 .selectCountry("Россия")
                 .setCity("Санкт-Петербург")
-                .uploadPhoto(MUSEUM_PHOTO_PATH)
+                .uploadPhoto(MUSEUM_IMAGE_PATH)
                 .setDescription(MUSEUM_DESCRIPTION)
                 .submitForm()
                 .checkToastMessage(String.format(MUSEUM_ADDED_MSG, name));
@@ -68,7 +68,7 @@ public class MuseumWebTest {
                 .setName(invalidMuseumName)
                 .selectCountry("Россия")
                 .setCity("Санкт-Петербург")
-                .uploadPhoto(MUSEUM_PHOTO_PATH)
+                .uploadPhoto(MUSEUM_IMAGE_PATH)
                 .setDescription(MUSEUM_DESCRIPTION)
                 .submitForm()
                 .checkTextFieldErrorMessage(MUSEUM_NAME_LENGTH_ERROR_MSG);
@@ -85,7 +85,7 @@ public class MuseumWebTest {
                 .setName(randomMuseumTitle())
                 .selectCountry("Россия")
                 .setCity(invalidCityName)
-                .uploadPhoto(MUSEUM_PHOTO_PATH)
+                .uploadPhoto(MUSEUM_IMAGE_PATH)
                 .setDescription(MUSEUM_DESCRIPTION)
                 .submitForm()
                 .checkTextFieldErrorMessage(CITY_NAME_LENGTH_ERROR_MSG);
@@ -102,7 +102,7 @@ public class MuseumWebTest {
                 .setName(randomMuseumTitle())
                 .selectCountry("Россия")
                 .setCity("Омск")
-                .uploadPhoto(MUSEUM_PHOTO_PATH)
+                .uploadPhoto(MUSEUM_IMAGE_PATH)
                 .setDescription(invalidDescriptionText)
                 .submitForm()
                 .checkTextFieldErrorMessage(DESCRIPTION_LENGTH_ERROR_MSG);

@@ -65,6 +65,6 @@ enum LocalConfig implements Config {
   @Nonnull
   @Override
   public String allureDockerUrl() {
-    return "http://127.0.0.1:5050/";
+    return null;
   }
 }

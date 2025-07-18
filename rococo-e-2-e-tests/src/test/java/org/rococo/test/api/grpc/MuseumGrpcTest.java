@@ -2,12 +2,14 @@ package org.rococo.test.api.grpc;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.rococo.api.grpc.CountryGrpcClient;
 import org.rococo.jupiter.annotation.TestMuseum;
 import org.rococo.model.CountryJson;
 import org.rococo.model.GeoLocationJson;
 import org.rococo.model.MuseumJson;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.rococo.constant.DefaultData.*;
 import static org.rococo.model.Countries.AUSTRALIA;
 import static org.rococo.model.Countries.RUSSIA;
 import static org.rococo.utils.ImageUtil.getEncodedImageFromClasspath;
@@ -15,21 +17,22 @@ import static org.rococo.utils.data.RandomDataUtils.randomMuseumTitle;
 
 public class MuseumGrpcTest extends BaseGrpcTest {
 
+    private final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
+
     @Test
     @DisplayName("gRPC: Adding new museum with rococo-museum grpc service")
     void shouldAddNewMuseum() {
         final String museumTitle = randomMuseumTitle();
+        final CountryJson countryJson  = countryGrpcClient.getCountryByName(RUSSIA.getName());
+
         MuseumJson museumJson = new MuseumJson(
             null,
             museumTitle,
             MUSEUM_DESCRIPTION,
             getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH),
             new GeoLocationJson(
-                CITY,
-                new CountryJson(
-                    RUSSIA_COUNTRY_ID,
-                    RUSSIA.getName()
-                )
+                    CITY,
+                    countryJson
             )
         );
 
@@ -40,7 +43,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH),
             result.photo());
         assertEquals(CITY, result.geo().city());
-        assertEquals(RUSSIA_COUNTRY_ID, result.geo().country().id());
+        assertEquals(countryJson.id(), result.geo().country().id());
         assertEquals(RUSSIA.getName(), result.geo().country().name());
     }
 
@@ -49,6 +52,8 @@ public class MuseumGrpcTest extends BaseGrpcTest {
     @TestMuseum
     void shouldUpdateMuseum(MuseumJson museumJson) {
         final String newCity = "Петербург";
+        final CountryJson countryJson  = countryGrpcClient.getCountryByName(AUSTRALIA.getName());
+
         MuseumJson newMuseumJson = new MuseumJson(
             museumJson.id(),
             museumJson.title() + " edited",
@@ -56,10 +61,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
             getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH_NEW),
             new GeoLocationJson(
                 newCity,
-                new CountryJson(
-                    AUSTRALIA_COUNTRY_ID,
-                    AUSTRALIA.getName()
-                )
+                countryJson
             )
         );
 
@@ -71,7 +73,7 @@ public class MuseumGrpcTest extends BaseGrpcTest {
         assertEquals(getEncodedImageFromClasspath(MUSEUM_IMAGE_PATH_NEW),
             result.photo());
         assertEquals(newCity, result.geo().city());
-        assertEquals(AUSTRALIA_COUNTRY_ID, result.geo().country().id());
+        assertEquals(countryJson.id(), result.geo().country().id());
         assertEquals(AUSTRALIA.getName(), result.geo().country().name());
     }
 

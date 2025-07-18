@@ -84,7 +84,6 @@ services:
     container_name: museum.rococo.dc
     image: ${PREFIX}/rococo-museum-docker:latest
     ports:
-      - 8805:8805
       - 8806:8806
     restart: always
     depends_on:
@@ -97,7 +96,6 @@ services:
     container_name: artist.rococo.dc
     image: ${PREFIX}/rococo-artist-docker:latest
     ports:
-      - 8807:8807
       - 8808:8808
     restart: always
     depends_on:
@@ -110,7 +108,6 @@ services:
     container_name: painting.rococo.dc
     image: ${PREFIX}/rococo-painting-docker:latest
     ports:
-      - 8809:8809
       - 8810:8810
     restart: always
     depends_on:
@@ -123,7 +120,6 @@ services:
     container_name: userdata.rococo.dc
     image: ${PREFIX}/rococo-userdata-docker:latest
     ports:
-      - 8801:8801
       - 8802:8802
     restart: always
     depends_on:
@@ -187,6 +183,7 @@ services:
       context: ./
       dockerfile: ./rococo-e-2-e-tests/Dockerfile
     environment:
+      - _JAVA_OPTIONS=-Xmx4g -Xms512m
       - ALLURE_DOCKER_API=${ALLURE_DOCKER_API}
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - BUILD_URL=${BUILD_URL}

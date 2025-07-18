@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.*;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.ByteArrayInputStream;
@@ -20,6 +22,8 @@ public class SelenideConfigurationExtension implements
         AfterEachCallback,
         TestExecutionExceptionHandler,
         LifecycleMethodExecutionExceptionHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SelenideConfigurationExtension.class);
 
     static {
         Configuration.browser = "chrome";
@@ -68,12 +72,16 @@ public class SelenideConfigurationExtension implements
 
     private static void doScreenshot() {
         if (WebDriverRunner.hasWebDriverStarted()) {
-            Allure.addAttachment(
-                    "Screenshot on failure",
-                    new ByteArrayInputStream(
-                            ((TakesScreenshot) WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)
-                    )
-            );
+            if (Allure.getLifecycle().getCurrentTestCaseOrStep().isPresent()) {
+                Allure.addAttachment(
+                        "Screenshot on failure",
+                        new ByteArrayInputStream(
+                                ((TakesScreenshot) WebDriverRunner.getWebDriver()).getScreenshotAs(OutputType.BYTES)
+                        )
+                );
+            } else {
+                LOG.warn("ALLURE: No test is running when trying to add screenshot attachment");
+            }
         }
     }
 }
