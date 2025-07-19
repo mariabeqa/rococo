@@ -3,11 +3,8 @@ package org.rococo.test.web;
 import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.rococo.api.grpc.CountryGrpcClient;
-import org.rococo.jupiter.annotation.ApiLogin;
-import org.rococo.jupiter.annotation.ScreenShotTest;
-import org.rococo.jupiter.annotation.TestMuseum;
-import org.rococo.jupiter.annotation.TestUser;
+import org.rococo.api.rest.impl.GatewayMuseumApiClient;
+import org.rococo.jupiter.annotation.*;
 import org.rococo.jupiter.annotation.meta.WebTest;
 import org.rococo.model.CountryJson;
 import org.rococo.model.GeoLocationJson;
@@ -17,7 +14,7 @@ import org.rococo.page.museum.MuseumsPage;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.UUID;
+import java.io.UnsupportedEncodingException;
 
 import static org.rococo.constant.DefaultData.MUSEUM_DESCRIPTION;
 import static org.rococo.constant.DefaultData.MUSEUM_IMAGE_PATH;
@@ -32,9 +29,6 @@ public class MuseumWebTest {
     private static final String CITY_NAME_LENGTH_ERROR_MSG = "Город не может быть короче 3 символов";
     private static final String DESCRIPTION_LENGTH_ERROR_MSG = "Описание не может быть короче 10 символов";
     private static final String MUSEUM_EDITED_MSG = "Обновлен музей: %s";
-
-    protected final CountryGrpcClient countryGrpcClient = new CountryGrpcClient();
-    protected final UUID AUSTRALIA_COUNTRY_ID = countryGrpcClient.getCountryByName(AUSTRALIA.getName()).id();
 
     @Test
     @DisplayName("WEB: User should be able to add a new Museum")
@@ -141,10 +135,12 @@ public class MuseumWebTest {
     @DisplayName("WEB: User should be able to edit Museum geo location")
     @ApiLogin(testUser = @TestUser())
     @TestMuseum
-    void shouldBeAbleToEditMuseumGeoLocation(MuseumJson museum) {
+    void shouldBeAbleToEditMuseumGeoLocation(@Token String token, MuseumJson museum) throws UnsupportedEncodingException {
         final String museumId = museum.id().toString();
         final String newCity = "Cидней";
         final String newCountry = AUSTRALIA.getName();
+        final GatewayMuseumApiClient gatewayMuseumApiClient = new GatewayMuseumApiClient();
+        CountryJson newCountryJson = gatewayMuseumApiClient.findCountryByName(token, newCountry);
 
         MuseumPage museumPage = Selenide.open(MuseumPage.url(museumId), MuseumPage.class)
                 .editMuseum()
@@ -163,10 +159,7 @@ public class MuseumWebTest {
                         museum.photo(),
                         new GeoLocationJson(
                                 newCity,
-                                new CountryJson(
-                                        AUSTRALIA_COUNTRY_ID,
-                                        newCountry
-                                )
+                                newCountryJson
                         )
                 )
         );

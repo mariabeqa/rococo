@@ -134,7 +134,7 @@ public class PaintingGrpcService extends RococoPaintingsServiceGrpc.RococoPainti
             Artist artist = getArtistById(request.getAuthorId());
 
             Page<PaintingEntity> allByArtistId = paintingRepository.findAllByArtistId(
-                UUID.fromString(request.getAuthorId()),
+                UUID.fromString(artist.getId()),
                 PageRequest.of(request.getPage(), request.getSize())
             );
 
