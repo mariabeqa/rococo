@@ -8,7 +8,6 @@
 **/vite.config.ts.timestamp-*
 
 #back
-README.md
 .gradle
 **/build
 !gradle/wrapper/gradle-wrapper.jar
