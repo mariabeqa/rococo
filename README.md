@@ -222,7 +222,10 @@ User-MacBook-Pro  rococo % bash docker-compose-e2e.sh
 ```
 #### 3. Selenoid UI доступен по адресу: http://127.0.0.1:9091
 
-#### 4. Allure доступен по адресу: http://allure:5252/allure-docker-service-ui/projects/mariamur-rococo
+#### 4. Allure доступен по адресу:
+при запуске в докере локально: http://allure:5252/allure-docker-service-ui/projects/mariamur-rococo
+
+при запуске на pull request: https://allure.niffler-stage.qa.guru/api/allure-docker-service/projects/mariamur-rococo/reports/latest/index.html
 
 <img src="readme/allure-report.png" width="600">
 
