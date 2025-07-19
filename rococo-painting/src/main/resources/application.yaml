@@ -4,6 +4,8 @@ grpc:
     max-inbound-message-size: 9155241000
 
 spring:
+  main:
+    web-application-type: none
   application:
     name: rococo-painting
   datasource:

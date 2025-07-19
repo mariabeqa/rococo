@@ -1,9 +1,6 @@
 package org.rococo.api.rest;
 
-import org.rococo.model.ArtistJson;
-import org.rococo.model.MuseumJson;
-import org.rococo.model.PaintingJson;
-import org.rococo.model.UserJson;
+import org.rococo.model.*;
 import org.rococo.model.pageable.RestResponsePage;
 import retrofit2.Call;
 import retrofit2.http.*;
@@ -89,5 +86,9 @@ public interface GatewayApi {
     @DELETE("api/painting")
     Call<Void> deletePainting(@Header("Authorization") String bearerToken,
                             @Query("paintingId") String paintingId);
+
+    @GET("api/country/name/{name}")
+    Call<CountryJson> findCountryByName(@Header("Authorization") String bearerToken,
+                                        @Path("name") String name);
 
 }
