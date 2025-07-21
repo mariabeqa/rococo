@@ -7,5 +7,3 @@ create table if not exists `user`
     avatar    longblob,
     primary key (id)
 );
-
-delete from `rococo-userdata`.`user`;

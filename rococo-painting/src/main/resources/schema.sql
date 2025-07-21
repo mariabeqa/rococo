@@ -9,5 +9,3 @@ create table if not exists `painting`
     content     longblob,
     primary key (id)
     );
-
-delete from `rococo-painting`.`painting`;

@@ -122,7 +122,7 @@ OpenJDK 64-Bit Server VM Temurin-21.0.1+12 (build 21.0.1+12-LTS, mixed mode)
 [Инструкция](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
 Рекомендованная версия Node.js - 22.6.0
 
-# Запуск ROCOCO локальное в IDE:
+# Запуск ROCOCO локально в IDE:
 
 #### 1. Перейти в папку rococo-client
 
@@ -158,6 +158,9 @@ User-MacBook-Pro rococo-auth % gradle bootRun --args='--spring.profiles.active=l
 #### 5  Запустить в любой последовательности другие сервисы: rococo-userdata, rococo-gateway, rococo-artist, rococo-museum, rococo-painting
 
 Начать работу с запущенным приложением можно открыв в браузере Rococo frontend по адресу http://127.0.0.1:3000/
+
+
+#### 6. Если необходимо, чтобы данные в БД не затирались каждый раз при перезапуске микросервисов, необходимо поставить значение never для sql.init.mode: never в src/main/resources/application.yml
 
 # Запуск ROCOCO в докере:
 
