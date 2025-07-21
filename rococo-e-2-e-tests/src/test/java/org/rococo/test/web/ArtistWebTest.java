@@ -59,7 +59,7 @@ public class ArtistWebTest {
     }
 
     @Test
-    @DisplayName("WEB: Error message in case artist bio length is insufficient")
+    @DisplayName("WEB: Error message in case artist biography length is insufficient")
     @ApiLogin(testUser = @TestUser())
     void shouldShowErrorIfArtistBioLengthIsInvalid() {
         final String invalidArtistBio = "abf kjf j";
